@@ -1,0 +1,9 @@
+playwright
+bs4
+langchain_google_vertexai
+langchain
+langchain_core
+dotenv
+chromadb
+langchain-community
+langchain_chroma
