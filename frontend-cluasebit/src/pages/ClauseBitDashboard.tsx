@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Plus, User, Bot, Download  , Settings, History, Shield, Database, Zap, Menu, Search, Bell, Sun } from 'lucide-react';
-import { SignIn, SignUp, SignedIn, SignedOut, useClerk, UserButton } from "@clerk/clerk-react";
+import { Send, Plus, User, Bot, Download, Shield, Database, Zap, Menu } from 'lucide-react';
+import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
 import { useNavigate } from 'react-router-dom';
+
+
 
 interface Message {
   id: number;
@@ -31,9 +33,11 @@ const ClauseBitDashboard: React.FC = () => {
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
   const [conversations, setConversations] = useState<Conversation[]>([]);
-  const [currentUserId] = useState<string>(() => `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const [currentSessionId, setCurrentSessionId] = useState<string>(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user } = useUser();
+const currentUserId = user?.id || "guest";
+
 
   const scrollToBottom = (): void => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -50,22 +54,58 @@ const ClauseBitDashboard: React.FC = () => {
 
   const loadConversations = async (): Promise<void> => {
     try {
-      const response = await fetch('http://127.0.0.1:8080/conversations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: currentUserId
-        })
-      });
-
+      // ✅ Fixed: Removed trailing slash to match your FastAPI endpoint
+      const response = await fetch(`http://127.0.0.1:8080/memory/recent/${currentUserId}/`);
       if (response.ok) {
         const conversationsData = await response.json();
-        setConversations(conversationsData);
+        console.log('Raw conversations data:', conversationsData); // Debug log
+
+        const formatted = conversationsData.map((conv: any, index: number) => {
+          // ✅ Generate title from first few chars if not available
+          let title = conv.title || 'New Chat';
+          if (!conv.title && conv.session_id) {
+            title = `Chat ${index + 1}`;
+          }
+
+          // ✅ Handle timestamp properly
+          let timeString = 'Unknown time';
+          if (conv.timestamp) {
+            try {
+              // Handle both Firestore timestamp and regular timestamp
+              let date;
+              if (conv.timestamp._seconds) {
+                // Firestore timestamp format
+                date = new Date(conv.timestamp._seconds * 1000);
+              } else if (typeof conv.timestamp === 'string') {
+                date = new Date(conv.timestamp);
+              } else {
+                date = new Date(conv.timestamp);
+              }
+              timeString = date.toLocaleTimeString();
+            } catch (e) {
+              console.warn('Error parsing timestamp:', conv.timestamp);
+              timeString = 'Unknown time';
+            }
+          }
+
+          return {
+            id: conv.session_id,
+            session_id: conv.session_id,
+            title: title,
+            time: timeString,
+            // ✅ Set message_count to 0 since your backend doesn't provide it yet
+            message_count: 0
+          };
+        });
+
+        console.log('Formatted conversations:', formatted); // Debug log
+        setConversations(formatted);
+      } else {
+        console.error('Failed to load conversations:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error loading conversations:', error);
+      // ✅ Don't show error to user, just log it
     }
   };
 
@@ -73,7 +113,7 @@ const ClauseBitDashboard: React.FC = () => {
     // Generate new session ID
     const newSessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     setCurrentSessionId(newSessionId);
-    
+
     // Clear current messages and show welcome message
     setMessages([
       {
@@ -83,49 +123,76 @@ const ClauseBitDashboard: React.FC = () => {
         timestamp: new Date().toLocaleTimeString()
       }
     ]);
-    
+
     // Clear input
     setInputMessage('');
   };
 
   const loadConversation = async (sessionId: string): Promise<void> => {
     try {
-      const response = await fetch(`http://127.0.0.1:8080/conversation/${sessionId}`);
-      
+      const response = await fetch(`http://127.0.0.1:8080/memory/${currentUserId}/${sessionId}`);
       if (response.ok) {
         const conversationData = await response.json();
-        
-        // Convert conversation messages to display format
-        const formattedMessages: Message[] = [
+        console.log('Loaded conversation data:', conversationData); // Debug log
+
+        const formattedMessages: Message[] = [];
+
+        // ✅ Handle messages array properly
+        const messages = conversationData.messages || [];
+        messages.forEach((msg: any, index: number) => {
+          let timestamp = new Date().toLocaleTimeString();
+
+          // Handle timestamp properly
+          if (msg.timestamp) {
+            try {
+              let date;
+              if (msg.timestamp._seconds) {
+                // Firestore timestamp format
+                date = new Date(msg.timestamp._seconds * 1000);
+              } else if (typeof msg.timestamp === 'string') {
+                date = new Date(msg.timestamp);
+              } else {
+                date = new Date(msg.timestamp);
+              }
+              timestamp = date.toLocaleTimeString();
+            } catch (e) {
+              console.warn('Error parsing message timestamp:', msg.timestamp);
+            }
+          }
+
+          formattedMessages.push({
+            id: formattedMessages.length + 1,
+            type: msg.role === 'user' ? 'user' : 'assistant',
+            content: msg.content || '',
+            timestamp: timestamp,
+          });
+        });
+
+        setMessages(formattedMessages);
+        setCurrentSessionId(sessionId);
+      } else {
+        console.error('Failed to load conversation:', response.status, response.statusText);
+        // ✅ Show user-friendly error
+        setMessages([
           {
             id: 1,
             type: 'assistant',
-            content: "Hi! I'm your AI-powered legal assistant. I can scan Terms of Service, Privacy Policies, and Cookie Banners — flagging risky clauses and explaining them in plain English. What would you like to analyze today?",
-            timestamp: new Date(conversationData.created_at).toLocaleTimeString()
+            content: "Sorry, I couldn't load this conversation. Please try starting a new chat.",
+            timestamp: new Date().toLocaleTimeString()
           }
-        ];
-        
-        conversationData.messages.forEach((msg: any, index: number) => {
-          formattedMessages.push({
-            id: formattedMessages.length + 1,
-            type: 'user',
-            content: msg.question,
-            timestamp: new Date(msg.timestamp).toLocaleTimeString()
-          });
-          
-          formattedMessages.push({
-            id: formattedMessages.length + 1,
-            type: 'assistant',
-            content: msg.response,
-            timestamp: new Date(msg.timestamp).toLocaleTimeString()
-          });
-        });
-        
-        setMessages(formattedMessages);
-        setCurrentSessionId(sessionId);
+        ]);
       }
     } catch (error) {
       console.error('Error loading conversation:', error);
+      // ✅ Show user-friendly error
+      setMessages([
+        {
+          id: 1,
+          type: 'assistant',
+          content: "Sorry, I encountered an error loading this conversation. Please try starting a new chat.",
+          timestamp: new Date().toLocaleTimeString()
+        }
+      ]);
     }
   };
 
@@ -163,7 +230,7 @@ const ClauseBitDashboard: React.FC = () => {
       }
 
       const responseText = await response.text();
-      
+
       // Add the API response as an assistant message
       setMessages(prev => [...prev, {
         id: prev.length + 1,
@@ -172,12 +239,15 @@ const ClauseBitDashboard: React.FC = () => {
         timestamp: new Date().toLocaleTimeString()
       }]);
 
-      // Reload conversations after sending a message
-      await loadConversations();
+      // ✅ Reload conversations after sending a message with a small delay
+      // This ensures the backend has time to save the conversation
+      setTimeout(() => {
+        loadConversations();
+      }, 500);
 
     } catch (error) {
       console.error('Error calling chat API:', error);
-      
+
       // Add error message
       setMessages(prev => [...prev, {
         id: prev.length + 1,
@@ -197,18 +267,7 @@ const ClauseBitDashboard: React.FC = () => {
     }
   };
 
-  const sampleQueries: string[] = [
-    "Change Policy peferences",
-    "What data does TikTok collect?",
-    "Compare Netflix vs Spotify privacy",
-    "Explain this cookie banner"
-  ];
-
   const conversationHistory: Conversation[] = conversations;
-
-  const handleSampleQueryClick = (query: string): void => {
-    setInputMessage(query);
-  };
 
   const toggleSidebar = (): void => {
     setSidebarOpen(!sidebarOpen);
@@ -218,13 +277,13 @@ const ClauseBitDashboard: React.FC = () => {
     setInputMessage(e.target.value);
   };
 
-const { signOut } = useClerk();
-const navigate = useNavigate();
+  const { signOut } = useClerk();
+  const navigate = useNavigate();
 
-const handleLogout = async () => {
-  await signOut();       // Ends Clerk session
-  navigate("/");         // React-router redirect to homepage
-};
+  const handleLogout = async () => {
+    await signOut();       // Ends Clerk session
+    navigate("/");         // React-router redirect to homepage
+  };
 
   return (
     <div className="h-screen bg-gradient-to-br from-purple-50 via-white to-purple-50 flex">
@@ -238,21 +297,19 @@ const handleLogout = async () => {
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">ClauseBit</span>
           </div>
-          
-          <button 
+
+          <button
             onClick={startNewChat}
             className="w-full flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl transition-all shadow-md hover:shadow-lg mb-4"
           >
             <Plus className="w-5 h-5" />
             <span className="font-medium">New Chat</span>
           </button>
-          
+
           <button className="w-full flex items-center space-x-3 px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl transition-all shadow-md hover:shadow-lg">
             <Download className="w-5 h-5" />
             <span className="font-medium">Get Chromium Extension</span>
           </button>
-          
-        
         </div>
 
         {/* Recent Conversations */}
@@ -260,8 +317,8 @@ const handleLogout = async () => {
           <h3 className="text-sm font-semibold text-gray-600 mb-4 uppercase tracking-wide">Recent</h3>
           <div className="space-y-2">
             {conversationHistory.map((conv: Conversation, index: number) => (
-              <div 
-                key={index} 
+              <div
+                key={conv.session_id}
                 onClick={() => loadConversation(conv.session_id)}
                 className={`p-3 rounded-xl hover:bg-purple-50 cursor-pointer transition-colors border ${
                   currentSessionId === conv.session_id 
@@ -272,7 +329,8 @@ const handleLogout = async () => {
                 <div className="font-medium text-gray-900 text-sm truncate">{conv.title}</div>
                 <div className="text-xs text-gray-500 mt-1 flex justify-between">
                   <span>{conv.time}</span>
-                  <span>{conv.message_count} messages</span>
+                  {/* ✅ Show "New" instead of message count for now */}
+                  <span>{conv.message_count > 0 ? `${conv.message_count} messages` : 'New'}</span>
                 </div>
               </div>
             ))}
@@ -304,7 +362,7 @@ const handleLogout = async () => {
         <nav className="bg-white/70 backdrop-blur-sm border-b border-purple-100 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <button 
+              <button
                 onClick={toggleSidebar}
                 className="p-2 hover:bg-purple-50 rounded-lg transition-colors"
               >
@@ -317,21 +375,18 @@ const handleLogout = async () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 bg-red-50 px-3 py-2 rounded-lg border border-green-100">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
                 <span className="text-sm text-red-700 font-medium">Under Development</span>
               </div>
-            {/* <button className="p-2 hover:bg-purple-50 rounded-lg transition-colors">
-                <Sun className="w-5 h-5 text-gray-600" />
-              </button> */}
-                      <button
-              className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all font-medium"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
+              <button
+                className="bg-gradient-to-r from-purple-600 to-purple-700 text-white px-4 py-2 rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all font-medium"
+                onClick={handleLogout}
+              >
+                Logout
+              </button>
             </div>
           </div>
         </nav>
@@ -347,26 +402,14 @@ const handleLogout = async () => {
                   </div>
                   <div className="absolute -top-2 -right-2 w-32 h-32 bg-gradient-to-r from-purple-200 to-blue-200 rounded-full blur-3xl opacity-30"></div>
                 </div>
-                
+
                 <h2 className="text-4xl font-bold mb-4">
-                  Take Control of 
+                  Take Control of
                   <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent"> Your Privacy</span>
                 </h2>
                 <p className="text-gray-600 mb-12 max-w-2xl mx-auto text-lg leading-relaxed">
                   ClauseBit is your AI-powered legal assistant that scans Terms of Service, Privacy Policies, and Cookie Banners — flagging risky clauses and explaining them in plain English. Personalized to your privacy preferences.
                 </p>
-                
-                <div className="grid grid-cols-2 gap-4 max-w-2xl mx-auto mb-12">
-                  {sampleQueries.map((query: string, index: number) => (
-                    <button
-                      key={index}
-                      onClick={() => handleSampleQueryClick(query)}
-                      className="p-6 text-left bg-white/80 backdrop-blur-sm border border-purple-100 rounded-2xl hover:border-purple-200 hover:bg-white transition-all shadow-sm hover:shadow-md"
-                    >
-                      <div className="font-medium text-gray-900 text-lg">{query}</div>
-                    </button>
-                  ))}
-                </div>
 
                 <div className="flex items-center justify-center space-x-12 text-sm text-gray-500">
                   <div className="flex items-center space-x-2">
@@ -397,7 +440,7 @@ const handleLogout = async () => {
                       <Bot className="w-5 h-5 text-white" />
                     </div>
                   )}
-                  
+
                   <div className="flex-1">
                     <div className={`${
                       message.type === 'user' 

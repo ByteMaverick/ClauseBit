@@ -530,3 +530,49 @@ body {
 .chatbox::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #7c3aed 0%, #db2777 100%);
 }
+/* Add this to your popup.css file */
+
+/* Icon styling */
+[data-lucide], .card-icon, .alert-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.card-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.alert-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
+/* Icon color variants */
+.card-icon.success {
+  color: #10b981; /* green */
+}
+
+.card-icon.danger {
+  color: #ef4444; /* red */
+}
+
+.card-icon.neutral {
+  color: #6b7280; /* gray */
+}
+
+.card-icon.warning {
+  color: #f59e0b; /* amber */
+}
+
+/* Send button icon */
+.send-button i {
+  width: 16px !important;
+  height: 16px !important;
+}

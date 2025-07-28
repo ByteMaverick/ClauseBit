@@ -8,10 +8,11 @@
   <!-- Fonts & Styles -->
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,600&display=swap" />
   <link rel="stylesheet" href="popup.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+  <!-- Use local lucide script instead of CDN -->
+  <script src="mini-icons.js"></script>
 </head>
 <body>
-  
+
     <!-- Title -->
     <div class="title-section">
       <div class="logo-icon">
@@ -28,7 +29,6 @@
     <!-- <button class="tab" data-tab="preferences">Preferences</button> -->
   </div>
 </div>
-
 
     <!-- Main Content -->
     <main class="content">
@@ -105,8 +105,6 @@
           </div>
         </section>
       </div>
-
-     
     </main>
 
     <!-- Footer -->
@@ -115,7 +113,6 @@
       <span>&bull;</span>
       <a href="http://localhost:5173/dashboard" target="_blank">Terms</a>
     </footer>
-  </div>
 
   <script src="popup.js"></script>
 </body>
