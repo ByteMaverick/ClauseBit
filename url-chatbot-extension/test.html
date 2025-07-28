@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>No Border PNG</title>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #logo {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(to right, #8b5cf6, #3b82f6);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      font-size: 24px;
+      font-family: sans-serif;
+    }
+
+    button {
+      position: absolute;
+      bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="logo">C</div>
+  <button onclick="saveAsPng()">Download PNG</button>
+
+  <script>
+    function saveAsPng() {
+      const element = document.getElementById("logo");
+      html2canvas(element, {
+        backgroundColor: null, // removes white background
+        useCORS: true,
+        scale: 3 // for higher resolution (optional)
+      }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "logo.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>

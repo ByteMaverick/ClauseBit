@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ClauseBit</title>
+  
+  <!-- Fonts & Styles -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,600&display=swap" />
+  <link rel="stylesheet" href="popup.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/umd/lucide.js"></script>
+</head>
+<body>
+  
+    <!-- Title -->
+    <div class="title-section">
+      <div class="logo-icon">
+          <span style="color: white; font-weight: bold; font-size: 18px;">C</span>
+      </div>
+      <h1 class="title">ClauseBit</h1>
+    </div>
+
+    <!-- Tabs -->
+<div class="tabs-container">
+  <div class="tabs">
+    <button class="tab active" data-tab="summary">Summary</button>
+    <button class="tab" data-tab="chatbot">Ask Me</button>
+    <!-- <button class="tab" data-tab="preferences">Preferences</button> -->
+  </div>
+</div>
+
+
+    <!-- Main Content -->
+    <main class="content">
+      <!-- Summary Tab -->
+      <div id="summary-tab" class="tab-content active">
+        <div class="alert-banner">
+          <i data-lucide="shield-check" class="alert-icon"></i>
+          <span class="alert-text">Loading risk status...</span>
+        </div>
+
+        <div class="summary-text">Analyzing privacy policies and terms of service...</div>
+
+        <section class="section">
+          <h2 class="section-title">Terms & Privacy Summary</h2>
+          <div class="cards">
+            <!-- Cards will be injected here dynamically -->
+            <div class="card">
+              <div class="card-content">
+                <div class="card-icon-text">
+                  <i data-lucide="eye" class="card-icon neutral"></i>
+                  <div class="card-text">
+                    <h3 class="card-title">Data Collection</h3>
+                    <p class="card-description">Standard data collection practices with <strong>moderate transparency</strong></p>
+                  </div>
+                </div>
+                <button class="why-button">Why?</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-content">
+                <div class="card-icon-text">
+                  <i data-lucide="share-2" class="card-icon danger"></i>
+                  <div class="card-text">
+                    <h3 class="card-title">Data Sharing</h3>
+                    <p class="card-description">Your data may be shared with <strong>third-party partners</strong></p>
+                  </div>
+                </div>
+                <button class="flag-button">Flag</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-content">
+                <div class="card-icon-text">
+                  <i data-lucide="shield" class="card-icon success"></i>
+                  <div class="card-text">
+                    <h3 class="card-title">Security</h3>
+                    <p class="card-description">Strong security measures in place to <strong>protect your data</strong></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Chatbot Tab -->
+      <div id="chatbot-tab" class="tab-content">
+        <section class="section">
+          <h2 class="section-title">Ask ClauseBit</h2>
+          <div class="chatbot-wrapper">
+            <div class="chat-window">
+              <div id="chatbox" class="chatbox">
+                <div class="bot-message fade-in">
+                  <strong>ClauseBit:</strong> Hello! I can help explain the terms and privacy policies of websites you visit. What would you like to know?
+                </div>
+              </div>
+              <form class="chat-form" onsubmit="return false">
+                <input type="text" id="userInput" class="chat-input" placeholder="Ask about privacy policies..." autocomplete="off" />
+                <button id="sendBtn" class="send-button" type="button">
+                  <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </section>
+      </div>
+
+     
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <a href="http://localhost:5173/dashboard" target="_blank">Main Dashboard</a>
+      <span>&bull;</span>
+      <a href="http://localhost:5173/dashboard" target="_blank">Terms</a>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
