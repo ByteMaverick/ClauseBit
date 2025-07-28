@@ -4,7 +4,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import ClerkProviderWithRoutes from "./auth/ClerkProviderWithRoutes.tsx";
 import { Layout } from "./components/Layout";
 import Home from "./pages/Home";
-import ClauseBitDashboardLegacy from "./pages/ClauseBitDashboardLegacy";
+import ClauseBitDashboard from "./pages/ClauseBitDashboard";
 import AuthenticationPage from "src/auth/AuthenticationPage.tsx";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
 
@@ -32,7 +32,7 @@ const App: React.FC = () => {
           element={
             <>
               <SignedIn>
-                <ClauseBitDashboardLegacy />
+                <ClauseBitDashboard />
               </SignedIn>
               <SignedOut>
                 <RedirectToSignIn />

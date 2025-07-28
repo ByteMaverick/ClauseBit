@@ -19,32 +19,6 @@ def generate_conversation_title(question: str) -> str:
         return question[:47] + "..."
     return question
 
-
-def format_time_ago(created_at: datetime) -> str:
-    """Format datetime to human readable 'time ago' format"""
-    now = datetime.now()
-    diff = now - created_at
-
-    if diff.days > 0:
-        if diff.days == 1:
-            return "Yesterday"
-        elif diff.days < 7:
-            return f"{diff.days} days ago"
-        else:
-            weeks = diff.days // 7
-            return f"{weeks} week{'s' if weeks > 1 else ''} ago"
-    elif diff.seconds > 3600:
-        hours = diff.seconds // 3600
-        return f"{hours} hour{'s' if hours > 1 else ''} ago"
-    elif diff.seconds > 60:
-        minutes = diff.seconds // 60
-        return f"{minutes} minute{'s' if minutes > 1 else ''} ago"
-    else:
-        return "Just now"
-
-
-from datetime import datetime, timezone
-
 from datetime import datetime, timezone
 
 
@@ -108,9 +82,6 @@ def save_conversation(session_id: str, question: str, response: str, user_id: st
         doc_ref.set(existing_data)
         return existing_data
 
-
-d = save_conversation("test69", "Tell me about mohammed", "Mohammed is a fuckup")
-print(d)
 
 
 

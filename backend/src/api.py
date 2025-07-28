@@ -10,11 +10,42 @@ import os
 from google.cloud import firestore
 
 from backend.src.utils.chatbot_memory import save_conversation
-from backend.src.utils.models import ChatRequest, ChatMemory
+from backend.src.utils.models import ChatRequest, ChatMemory, UrlRequest
 
 # 🔐 Set Firestore Credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/mohammedansari/Desktop/clausebit/backend/src/utils/clausebit-firestore-key.json"
-
+dic = {
+    "riskLevel": "Some risks found",
+    "summaryText": "Data sharing is allowed with third parties.",
+    "clauses": [
+        {
+            "type": "danger",
+            "icon": "alert-triangle",
+            "title": "Data Sharing",
+            "description": "Your data may be shared with third parties such as vendors and partners.",
+            "action": "Why?"
+        },
+        {
+            "type": "neutral",
+            "icon": "database",
+            "title": "Data Retention",
+            "description": "Your data is stored for at least 6 months after your account is deleted. fff"
+        },
+        {
+            "type": "success",
+            "icon": "check-circle",
+            "title": "Location Tracking",
+            "description": "Your location is not tracked.",
+            "action": "Flag inaccurate"
+        },
+        {
+            "type": "success",
+            "icon": "check-circle",
+            "title": "Data Security",
+            "description": "Reasonable measures are used to protect your data. nice"
+        }
+    ]
+}
 # 🔧 FastAPI Setup
 app = FastAPI()
 
@@ -45,9 +76,10 @@ async def chat_endpoint(req: ChatRequest):
     return response
 
 @app.post("/summary")
-async def summary_endpoint(req):
+@app.post("/summary")
+async def summary_endpoint(req: UrlRequest):
     print("🔍 Requested summary for:", req.company_name)
-    return "dic"
+    return dic
 
 @app.post("/classifier")
 async def classifier_endpoint(req):
