@@ -23,18 +23,16 @@ from backend.src.tools.datatracker import add_company
 def extract_main_text(html: str) -> str:
     soup = BeautifulSoup(html, "html.parser")
 
-    # Remove non-visible or junk tags
     for tag in soup(["script", "style", "noscript", "header", "footer", "svg", "meta", "nav", "aside", "form"]):
         tag.decompose()
 
-    # Prioritize meaningful tags
     container = soup.find("main") or soup.find("article") or soup.body
     if not container:
         return ""
 
-    # Clean and normalize text
+    # 🔧 FIX: Loosen or remove this filter
     lines = container.get_text(separator="\n").splitlines()
-    lines = [line.strip() for line in lines if len(line.strip()) > 30]
+    lines = [line.strip() for line in lines if len(line.strip()) > 5]  # Changed from 30 to 5
     return "\n".join(lines)
 
 
@@ -220,43 +218,37 @@ class ScraperManager:
         return policy_links
 
     async def extract_fully_rendered_page(self, url: str) -> str:
-
-        # Step 1: Check if it's plain HTML via HEAD
         try:
-            head_resp = requests.head(url, timeout=5, allow_redirects=True)
-            content_type = head_resp.headers.get("Content-Type", "").lower()
-
-            if "text/html" in content_type:
-                print("🧪 Detected HTML content. Using requests + BeautifulSoup...")
-                response = requests.get(url, timeout=10)
-                response.raise_for_status()
-                return extract_main_text(response.text)
-            else:
-                print(f"📄 Detected non-HTML content type: {content_type}. Using Playwright...")
-        except Exception as e:
-            print(f"⚠️ HEAD check failed: {e}. Using Playwright...")
-
-        # Step 2: Use Playwright for dynamic rendering
-        try:
+            # First attempt: Use Playwright for dynamic content
             async with async_playwright() as p:
                 browser = await p.chromium.launch(headless=True, args=["--no-sandbox"])
                 page = await browser.new_page()
 
                 try:
-                    await page.goto(url, timeout=25000, wait_until="networkidle")
+                    await page.goto(url, timeout=20000, wait_until="networkidle")
                     html = await page.content()
-                    print("✅ Playwright succeeded.")
+                    print("✅ Playwright succeeded, so this is not the issue")
                     return extract_main_text(html)
+
                 finally:
                     await browser.close()
 
         except PlaywrightTimeout:
-            print("⚠️ Timeout in Playwright.")
+            print("⚠️ Timeout in Playwright, falling back to BeautifulSoup...")
 
         except Exception as e:
-            print(f"❌ Playwright failed: {e}")
+            print(f"⚠️ Playwright failed due to {e}, falling back to BeautifulSoup...")
 
-        return ""
+        # Fallback: Use requests + BeautifulSoup (static HTML only)
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            print("✅ Fallback using BeautifulSoup succeeded")
+            return extract_main_text(response.text)
+
+        except Exception as e:
+            print(f"❌ Both methods failed: {e}")
+            return ""
 
     async def process_company_policies(self,company_url):
         footer_links = await self.extract_footer_links_async(company_url)
@@ -278,9 +270,14 @@ class ScraperManager:
         print("done")
         return policies_list
 
-    async def chunking(self,company_url):
-        print("Chunking the data!")
+    async def chunking(self, company_url):
+        print("🧪 Chunking the data!")
         pages = await self.process_company_policies(company_url)
+
+        print(f"Pages scraped: {len(pages)}")
+        for idx, page in enumerate(pages):
+            print(f"📄 Page {idx} content length: {len(page['content'])}")
+            print(f"🔗 Source: {page['metadata']}")
 
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=500,
@@ -291,65 +288,75 @@ class ScraperManager:
         main_data = [page["content"] for page in pages]
         metadata_tag = [{"source": page["metadata"]} for page in pages]
 
+        # Check if content exists
+        if not any(main_data):
+            print(" No valid page content found. Skipping chunking.")
+            return []
 
-
-        # Wrap the content and metadata in lists
+        # Wrap the content and metadata in documents
         chunks = text_splitter.create_documents(
             texts=main_data,
             metadatas=metadata_tag
         )
 
-        print("generating the metadata tags with con ")
+        print(f" Total chunks generated: {len(chunks)}")
+
+        if not chunks:
+            print(" Chunking failed — possibly due to empty or short text.")
+            return []
+
+        print("Generating the metadata tags with Gemini...")
+
         prompt = ChatPromptTemplate.from_messages([
             ("system",
              '''You are a policy analyzer that generates structured metadata for pre-chunked legal content (e.g., Terms of Service, Privacy Policies). Your output will be used for semantic retrieval, privacy risk detection, and clause-level reasoning in downstream AI applications.'''),
             ("human", '''Given the following policy text, generate a **JSON object** that includes structured metadata fields.
 
-        Use this schema(If something None remove the schema ex if"risk_tags": None remove it! ):
-        - "domain": {url}.
-        - "scrape_date": {timestamp}
-        - "language": The detected language (e.g., "en").
-        - "policy_type": One of: "privacy_policy", "terms_of_service", "cookie_policy", "acceptable_use", "other"
-        - "risk_tags": comma seperated  detected privacy or legal risks (e.g., "data_sharing, location_tracking", etc.)
-        - "section_title": Descriptive title for this chunk. If none is found, infer one.
-        - "summary": A 1–2 sentence plain-English summary of what the chunk means.
-        - "categories": comma seperated high-level topics (e.g., "data_collection", "user_rights", etc.)
-        - "user_impact_level": One of "low", "medium", or "high" based on how much the policy affects the user's rights or data.
+    Use this schema (remove any fields with None values):
+    - "domain": {url}.
+    - "scrape_date": {timestamp}
+    - "language": Detected language (e.g., "en").
+    - "policy_type": One of: "privacy_policy", "terms_of_service", "cookie_policy", "acceptable_use", "other"
+    - "risk_tags": comma-separated privacy/legal risks (e.g., "data_sharing, location_tracking")
+    - "section_title": Descriptive title for this chunk (infer if not present)
+    - "summary": A 1–2 sentence plain-English summary
+    - "categories": comma-separated topics (e.g., "data_collection", "user_rights")
+    - "user_impact_level": One of "low", "medium", "high" based on user impact
 
-        Return **only one JSON object**. No markdown, no code formatting, and no extra explanation.
+    Return only one valid JSON object. No markdown, no explanation.
 
-        Policy Text:
-        """
-        {data}
-        """
-        ''')
+    Policy Text:
+    """
+    {data}
+    """''')
         ])
 
         import asyncio
-        semaphore = asyncio.Semaphore(50)  # Max 50 concurrent calls
+        semaphore = asyncio.Semaphore(50)
 
         async def enrich_metadata_async(chunk, company_url):
             async with semaphore:
                 timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
                 base_chain = prompt | self.llm | JsonOutputParser()
-                response = await base_chain.ainvoke({
-                    "data": chunk.page_content,
-                    "url": company_url,
-                    "timestamp": timestamp
-                })
-
-                chunk.metadata = chunk.metadata| response
+                try:
+                    response = await base_chain.ainvoke({
+                        "data": chunk.page_content,
+                        "url": company_url,
+                        "timestamp": timestamp
+                    })
+                    chunk.metadata = chunk.metadata | response
+                except Exception as e:
+                    print(f"❌ Metadata generation failed for chunk: {e}")
 
         async def enrich_all_chunks(chunks, company_url):
             tasks = [enrich_metadata_async(chunk, company_url) for chunk in chunks]
             await asyncio.gather(*tasks)
 
-        await enrich_all_chunks(chunks[0:2], company_url)
+        await enrich_all_chunks(chunks, company_url)
 
-        # Adding company name to firestore
-        add_company(company_url,True)
+        # Mark success
+        add_company(company_url, True)
 
-        print("done chunking")
-
+        print("Done chunking.")
         return chunks
 
