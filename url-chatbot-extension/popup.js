@@ -70,13 +70,22 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 🔍 Grab current tab URL (Chrome extension context)
+  // 🔍 Get current tab's origin URL (e.g., https://github.com/)
   try {
     chrome.runtime.sendMessage({ type: "GET_CURRENT_TAB" }, (response) => {
       if (response?.url) {
-        currentURL = response.url;
-        sendInitialRequest(currentURL); // send to classifier
-        loadSummaryFromBackend(currentURL); // fetch summary
+        try {
+          const urlObj = new URL(response.url);
+          currentURL = urlObj.origin + "/";
+        } catch (e) {
+          console.warn("⚠️ Failed to parse URL:", e);
+          currentURL = response.url; // fallback
+        }
+
+        // ⏳ Wait for potential background scanning, then load summary
+        setTimeout(() => {
+          loadSummaryFromBackend(currentURL);
+        }, 1000);
       }
     });
   } catch (e) {
@@ -84,25 +93,10 @@ document.addEventListener("DOMContentLoaded", () => {
     loadSummaryFromBackend(""); // fallback
   }
 
-  // 📡 Send site info to classifier endpoint
-  async function sendInitialRequest(url) {
-    appendMessage("System", `🔍 Scanning ${url}...`, true);
-    try {
-      await fetch("http://127.0.0.1:8080/classifier", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ company_name: url })
-      });
-      appendMessage("System", `✅ Scan complete.`, true);
-    } catch {
-      appendMessage("System", `❌ Failed to contact server.`, true);
-    }
-  }
-
-  // 📑 Load summary UI from backend
+  // 📑 Load summary from backend and render in UI
   async function loadSummaryFromBackend(url) {
     try {
-      console.log("Calling /summary with:", url);
+      console.log("📡 Calling /summary with:", url);
 
       const res = await fetch("http://127.0.0.1:8080/summary", {
         method: "POST",
@@ -112,13 +106,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await res.json();
 
-      // 🌟 Update banner and main summary text
+      // 🌟 Display risk summary
       document.querySelector(".alert-text").textContent = data.riskLevel;
       document.querySelector(".summary-text").textContent = data.summaryText;
 
-      // 🧱 Inject each clause as a card
+      // 🧱 Render clause cards
       const cardsContainer = document.querySelector(".cards");
-      cardsContainer.innerHTML = ""; // clear existing
+      cardsContainer.innerHTML = "";
 
       data.clauses.forEach((clause) => {
         const card = document.createElement("div");
@@ -142,13 +136,11 @@ document.addEventListener("DOMContentLoaded", () => {
         cardsContainer.appendChild(card);
       });
 
-      lucide.createIcons(); // ensure icons show up
+      lucide.createIcons(); // refresh Lucide icons
     } catch (error) {
       console.error("❌ Failed to load summary:", error);
       document.querySelector(".summary-text").textContent = "Failed to load summary.";
       document.querySelector(".alert-text").textContent = "⚠️ Risk summary unavailable.";
-      console.error("Summary fetch failed:", error);
-
     }
   }
 });

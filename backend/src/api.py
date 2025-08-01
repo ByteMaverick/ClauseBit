@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
+import asyncio
 from pydantic import BaseModel
 from datetime import datetime
 from typing import List, Optional
@@ -9,43 +10,20 @@ import os
 
 from google.cloud import firestore
 
+from backend.prototype_notebooks.auth_test import process_chat_message
+from backend.src.tools.vector_store import VectorStoreManager
 from backend.src.utils.chatbot_memory import save_conversation
 from backend.src.utils.models import ChatRequest, ChatMemory, UrlRequest
+from backend.src.agents.extension_backend import summary, summary_no_retrieval
+from backend.src.tools.datatracker import get_company_by_url
+
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="vertexai")
+
 
 # 🔐 Set Firestore Credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/mohammedansari/Desktop/clausebit/backend/src/utils/clausebit-firestore-key.json"
-dic = {
-    "riskLevel": "Some risks found",
-    "summaryText": "Data sharing is allowed with third parties.",
-    "clauses": [
-        {
-            "type": "danger",
-            "icon": "alert-triangle",
-            "title": "Data Sharing",
-            "description": "Your data may be shared with third parties such as vendors and partners.",
-            "action": "Why?"
-        },
-        {
-            "type": "neutral",
-            "icon": "database",
-            "title": "Data Retention",
-            "description": "Your data is stored for at least 6 months after your account is deleted. fff"
-        },
-        {
-            "type": "success",
-            "icon": "check-circle",
-            "title": "Location Tracking",
-            "description": "Your location is not tracked.",
-            "action": "Flag inaccurate"
-        },
-        {
-            "type": "success",
-            "icon": "check-circle",
-            "title": "Data Security",
-            "description": "Reasonable measures are used to protect your data. nice"
-        }
-    ]
-}
+
 # 🔧 FastAPI Setup
 app = FastAPI()
 
@@ -63,23 +41,66 @@ memory_collection = db.collection("memories")
 
 
 # 🚀 Chat endpoint
+# Updated FastAPI endpoint
 @app.post("/chat")
 async def chat_endpoint(req: ChatRequest):
     print(f"question: {req.question}")
     print(f"Id: {req.session_id}")
     print(f"User ID: {req.user_id}")
 
-    response = f" {req.question}"
+
+    # Process the chat message
+    result = process_chat_message(
+        question=req.question,
+        session_id=req.session_id,
+        user_id=req.user_id,
+        current_url=getattr(req, 'url', None),  # Add URL to ChatRequest if needed
+
+    )
+
+    response = result["response"]
+    elapsed = result["elapsed_time"]
+
+    print(f"🚀 ClauseBit ({elapsed:.1f}s): {response}")
 
     # Save conversation
-    save_conversation(req.session_id,req.question,response,req.user_id)
-    return response
+    save_conversation(req.session_id, req.question, response, req.user_id)
+
+    return {
+        "response": response,
+        "elapsed_time": elapsed,
+        "status": result["status"],
+        "session_id": req.session_id,
+        "user_id": req.user_id
+    }
 
 @app.post("/summary")
 @app.post("/summary")
 async def summary_endpoint(req: UrlRequest):
     print("🔍 Requested summary for:", req.company_name)
+
+    status = get_company_by_url(req.company_name)
+
+    if not status["found_data"]:
+        dic = summary_no_retrieval(req.company_name)
+
+    else:
+        dic = summary(req.company_name)
     return dic
+
+
+@app.post("/collector")
+async def summary_endpoint(req: UrlRequest):
+    print("🔍 Requested collector for:", req.company_name)
+    status = get_company_by_url(req.company_name)
+    vectorstore = VectorStoreManager()
+    if not status:
+        print("Triggered Web search!")
+        await vectorstore.proto_add_final(req.company_name)
+
+
+
+    # dic = summary(req.company_name)
 
 @app.post("/classifier")
 async def classifier_endpoint(req):

@@ -280,7 +280,7 @@ class ScraperManager:
             print(f"🔗 Source: {page['metadata']}")
 
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=500,
+            chunk_size=3500,
             chunk_overlap=100,
             separators=["\n\n", "\n", ".", " "]
         )
@@ -332,7 +332,7 @@ class ScraperManager:
         ])
 
         import asyncio
-        semaphore = asyncio.Semaphore(50)
+        semaphore = asyncio.Semaphore(15)
 
         async def enrich_metadata_async(chunk, company_url):
             async with semaphore:

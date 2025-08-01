@@ -36,7 +36,7 @@ class Grader:
 
         return average_score
 
-    def llm_grader(self, chunks, query):
+    def CompositeGrader(self, chunks, query):
         """
         Composite Scoring:
         - alpha = 0.4 for embedding similarity
@@ -47,24 +47,27 @@ class Grader:
         prompt = ChatPromptTemplate.from_messages([
             ("system", "Evaluate the following chunk for how well it answers the user query."),
             ("human", '''
-    Return only one valid JSON object. No markdown, no explanation.
+        Return only one valid JSON object. Do not include any explanation, markdown, or formatting. Your entire response should be a single JSON object.
 
-    Query:
-    {query}
+        Query:
+        {query}
 
-    Chunk:
-    {chunk}
+        Chunk:
+        {chunk}
 
-    Rate from 1 to 5 for:
-    - Relevance
-    - Completeness
-    - Faithfulness
+        Rate each from 1 to 5:
+        - relevance
+        - completeness
+        - faithfulness
 
-    Output format:
-    relevance: x
-    completeness: x
-    faithfulness: x
-            ''')
+       Respond with a JSON object **in this exact format**:
+
+        {{
+          "relevance": 5,
+          "completeness": 4,
+          "faithfulness": 5
+        }}
+        ''')
         ])
 
         base_chain = prompt | self.llm | JsonOutputParser()
@@ -115,14 +118,15 @@ class Grader:
 
 grader = Grader()
 
-question = "Does neetcode.io share data"
-question = "What is ClauseBit and how does it protect privacy?"
-retrieval_chunks = [
-    "ClauseBit is a browser extension that analyzes privacy policies using AI to flag risky clauses like data resale, location tracking, and auto-renewal traps. It summarizes them and offers a real-time risk score."
-]
 
-score = grader.SimilarityScore(retrieval_chunks, question)
-print(f"Embedding Similarity Score: {score:.3f}")
+def test():
+    question = "What is ClauseBit and how does it protect privacy?"
+    retrieval_chunks = [
+        "ClauseBit is a browser extension that analyzes privacy policies using AI to flag risky clauses like data resale, location tracking, and auto-renewal traps. It summarizes them and offers a real-time risk score."
+    ]
 
-score = grader.llm_grader(retrieval_chunks,question)
-print(score)
+    score = grader.SimilarityScore(retrieval_chunks, question)
+    print(f"Embedding Similarity Score: {score:.3f}")
+
+    score = grader.CompositeGrader(retrieval_chunks, question)
+    print(score)
