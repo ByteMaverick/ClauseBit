@@ -40,24 +40,35 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     }
 
     // ⏳ Trigger /summary after 5 seconds if still on same URL
-    const timerId = setTimeout(() => {
-      chrome.tabs.get(tabId, (updatedTab) => {
-        if (chrome.runtime.lastError || !updatedTab || !updatedTab.url) return;
+    // 🔄 Fetch and cache summary in local storage
+const timerId = setTimeout(() => {
+  chrome.tabs.get(tabId, (updatedTab) => {
+    if (chrome.runtime.lastError || !updatedTab || !updatedTab.url) return;
 
-        const stillUrl = new URL(updatedTab.url).origin + "/";
-        if (stillUrl === currentUrl) {
-          console.log("🧠 Still on URL after 5s, fetching summary for:", currentUrl);
-          fetch("http://127.0.0.1:8080/summary", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ company_name: currentUrl })  // ✅ Adjust if needed
-          })
-          .then(res => res.json())
-          .then(data => console.log("✅ Summary response:", data))
-          .catch(err => console.error("❌ Summary error:", err));
-        }
-      });
-    }, 1000 * 1000); // 5 seconds delay
+    const stillUrl = new URL(updatedTab.url).origin + "/";
+    if (stillUrl === currentUrl) {
+      console.log("🧠 Still on URL after 5s, fetching summary for:", currentUrl);
+      fetch("http://127.0.0.1:8080/summary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ company_name: currentUrl })
+      })
+        .then(res => res.json())
+        .then(data => {
+          console.log("✅ Summary response:", data);
+
+          // ✅ Save summary to local storage
+          chrome.storage.local.set({ [`summary_${currentUrl}`]: data });
+
+          // ✅ Badge notification
+          chrome.action.setBadgeText({ text: "!" });
+          chrome.action.setBadgeBackgroundColor({ color: "#FF0000" });
+        })
+        .catch(err => console.error("❌ Summary error:", err));
+    }
+  });
+}, 3000); // 3s delay
+
 
     classifierTimers.set(tabId, timerId);
   }

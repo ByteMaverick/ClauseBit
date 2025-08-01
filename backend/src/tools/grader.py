@@ -71,7 +71,7 @@ class Grader:
         ])
 
         base_chain = prompt | self.llm | JsonOutputParser()
-
+        final_composite_score = 0
 
         if isinstance(chunks, str):
             chunks = [chunks]
@@ -104,16 +104,10 @@ class Grader:
                     delta * faith
             )
 
-            scores.append({
-                "chunk": chunk,
-                "similarity": float(round(similarity_score, 3)),
-                "relevance": response["relevance"],
-                "completeness": response["completeness"],
-                "faithfulness": response["faithfulness"],
-                "composite_score": float(round(composite_score, 3))
-            })
+            final_composite_score = float(round(composite_score, 3))
 
-        return scores
+
+        return final_composite_score
 
 
 grader = Grader()

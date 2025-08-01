@@ -7,7 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const chatForm = document.querySelector(".chat-form");
   let currentURL = "";
 
-  // 🛡️ Escape to prevent injection
   const escapeHTML = (str) =>
     str.replace(/[&<>"']/g, (tag) => ({
       "&": "&amp;",
@@ -17,7 +16,6 @@ document.addEventListener("DOMContentLoaded", () => {
       "'": "&#039;"
     })[tag]);
 
-  // 🧠 Display message in chat
   const appendMessage = (sender, text, isBot = false) => {
     const div = document.createElement("div");
     div.className = isBot ? "bot-message" : "user-message";
@@ -26,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
     chatbox.scrollTop = chatbox.scrollHeight;
   };
 
-  // ✉️ Handle sending a message
   async function handleSend() {
     const message = userInput.value.trim();
     if (!message) return;
@@ -39,25 +36,24 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: message,
-          session_id: "default-session"
+          session_id: "default-session",
+          current_url: currentURL
         })
       });
 
-      const data = await res.text();
-      appendMessage("ClauseBit", data, true);
+      const data = await res.json();
+      appendMessage("ClauseBit", data.response, true);
     } catch {
       appendMessage("ClauseBit", `❌ Error contacting AI backend.`, true);
     }
   }
 
-  // 🖱️ Button and keyboard support
   sendBtn?.addEventListener("click", handleSend);
   chatForm?.addEventListener("submit", (e) => {
     e.preventDefault();
     handleSend();
   });
 
-  // 🧭 Tab switching
   tabButtons.forEach((button) => {
     button.addEventListener("click", () => {
       const tab = button.getAttribute("data-tab");
@@ -70,7 +66,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // 🔍 Get current tab's origin URL (e.g., https://github.com/)
+  // 🔍 Get tab URL
   try {
     chrome.runtime.sendMessage({ type: "GET_CURRENT_TAB" }, (response) => {
       if (response?.url) {
@@ -78,11 +74,19 @@ document.addEventListener("DOMContentLoaded", () => {
           const urlObj = new URL(response.url);
           currentURL = urlObj.origin + "/";
         } catch (e) {
-          console.warn("⚠️ Failed to parse URL:", e);
-          currentURL = response.url; // fallback
+          console.warn("⚠️ URL parse failed:", e);
+          currentURL = response.url;
         }
 
-        // ⏳ Wait for potential background scanning, then load summary
+        // 🌐 First try from cache
+        chrome.storage.local.get([`summary_${currentURL}`], (result) => {
+          const cachedSummary = result[`summary_${currentURL}`];
+          if (cachedSummary) {
+            renderSummary(cachedSummary);
+          }
+        });
+
+        // 🔄 Always fetch latest
         setTimeout(() => {
           loadSummaryFromBackend(currentURL);
         }, 1000);
@@ -93,11 +97,8 @@ document.addEventListener("DOMContentLoaded", () => {
     loadSummaryFromBackend(""); // fallback
   }
 
-  // 📑 Load summary from backend and render in UI
   async function loadSummaryFromBackend(url) {
     try {
-      console.log("📡 Calling /summary with:", url);
-
       const res = await fetch("http://127.0.0.1:8080/summary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -106,41 +107,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const data = await res.json();
 
-      // 🌟 Display risk summary
-      document.querySelector(".alert-text").textContent = data.riskLevel;
-      document.querySelector(".summary-text").textContent = data.summaryText;
-
-      // 🧱 Render clause cards
-      const cardsContainer = document.querySelector(".cards");
-      cardsContainer.innerHTML = "";
-
-      data.clauses.forEach((clause) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="card-content">
-            <div class="card-icon-text">
-              <i data-lucide="${clause.icon}" class="card-icon ${clause.type}"></i>
-              <div class="card-text">
-                <h3 class="card-title">${clause.title}</h3>
-                <p class="card-description">${clause.description}</p>
-              </div>
-            </div>
-            ${
-              clause.action
-                ? `<button class="${clause.action === "Why?" ? "why-button" : "flag-button"}">${clause.action}</button>`
-                : ""
-            }
-          </div>
-        `;
-        cardsContainer.appendChild(card);
-      });
-
-      lucide.createIcons(); // refresh Lucide icons
+      // 🔄 Update cache and UI
+      chrome.storage.local.set({ [`summary_${url}`]: data });
+      renderSummary(data);
     } catch (error) {
       console.error("❌ Failed to load summary:", error);
       document.querySelector(".summary-text").textContent = "Failed to load summary.";
       document.querySelector(".alert-text").textContent = "⚠️ Risk summary unavailable.";
     }
+  }
+
+  function renderSummary(data) {
+    document.querySelector(".alert-text").textContent = data.riskLevel;
+    document.querySelector(".summary-text").textContent = data.summaryText;
+
+    const cardsContainer = document.querySelector(".cards");
+    cardsContainer.innerHTML = "";
+
+    data.clauses.forEach((clause) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="card-content">
+          <div class="card-icon-text">
+            <i data-lucide="${clause.icon}" class="card-icon ${clause.type}"></i>
+            <div class="card-text">
+              <h3 class="card-title">${clause.title}</h3>
+              <p class="card-description">${clause.description}</p>
+            </div>
+          </div>
+          ${
+            clause.action
+              ? `<button class="${clause.action === "Why?" ? "why-button" : "flag-button"}">${clause.action}</button>`
+              : ""
+          }
+        </div>
+      `;
+      cardsContainer.appendChild(card);
+    });
+
+    lucide.createIcons();
+    chrome.action.setBadgeText({ text: "" }); // Clear badge after showing
   }
 });

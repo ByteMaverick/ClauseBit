@@ -10,9 +10,10 @@ import os
 
 from google.cloud import firestore
 
-from backend.prototype_notebooks.auth_test import process_chat_message
+from backend.src.agents.graph import end_point_chat
+from backend.src.agents.state_setup import ClauseBitState
 from backend.src.tools.vector_store import VectorStoreManager
-from backend.src.utils.chatbot_memory import save_conversation
+from backend.src.utils.chatbot_memory import save_conversation, get_saved_conversation
 from backend.src.utils.models import ChatRequest, ChatMemory, UrlRequest
 from backend.src.agents.extension_backend import summary, summary_no_retrieval
 from backend.src.tools.datatracker import get_company_by_url
@@ -42,37 +43,37 @@ memory_collection = db.collection("memories")
 
 # 🚀 Chat endpoint
 # Updated FastAPI endpoint
+
 @app.post("/chat")
 async def chat_endpoint(req: ChatRequest):
     print(f"question: {req.question}")
     print(f"Id: {req.session_id}")
     print(f"User ID: {req.user_id}")
+    print(f"url:{req.current_url}")
 
 
+    message_history =get_saved_conversation(req.session_id,req.user_id)
+    messages = message_history["messages"]
+
+    if req.current_url is None:
+        req.current_url ="https://github.com/"
     # Process the chat message
-    result = process_chat_message(
+    result = end_point_chat(
         question=req.question,
         session_id=req.session_id,
         user_id=req.user_id,
-        current_url=getattr(req, 'url', None),  # Add URL to ChatRequest if needed
+        current_url=req.current_url,  # Add URL to ChatRequest if needed
+        conversation_history = messages
 
     )
 
     response = result["response"]
-    elapsed = result["elapsed_time"]
-
-    print(f"🚀 ClauseBit ({elapsed:.1f}s): {response}")
+    print(f" ClauseBit: {response}")
 
     # Save conversation
     save_conversation(req.session_id, req.question, response, req.user_id)
 
-    return {
-        "response": response,
-        "elapsed_time": elapsed,
-        "status": result["status"],
-        "session_id": req.session_id,
-        "user_id": req.user_id
-    }
+    return {"response": response}
 
 @app.post("/summary")
 @app.post("/summary")
@@ -81,11 +82,15 @@ async def summary_endpoint(req: UrlRequest):
 
     status = get_company_by_url(req.company_name)
 
+    if type(status) == bool:
+        return summary(req.company_name)
+
     if not status["found_data"]:
         dic = summary_no_retrieval(req.company_name)
 
     else:
         dic = summary(req.company_name)
+
     return dic
 
 

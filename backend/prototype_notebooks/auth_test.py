@@ -18,14 +18,14 @@ from backend.src.utils.models import Message
 nest_asyncio.apply()
 
 
-# 🚀 OPTIMIZATION 1: Cache expensive operations
+# OPTIMIZATION 1: Cache expensive operations
 @lru_cache(maxsize=100)
 def get_cached_db_status(url: str):
     """Cache database status checks to avoid repeated lookups"""
     return get_company_by_url(url)
 
 
-# 🚀 OPTIMIZATION 2: Thread pool for I/O operations
+#  OPTIMIZATION 2: Thread pool for I/O operations
 executor = ThreadPoolExecutor(max_workers=4)
 
 

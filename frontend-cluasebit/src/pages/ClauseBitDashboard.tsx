@@ -103,7 +103,8 @@ const ClauseBitDashboard: React.FC = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const responseText = await response.text();
+      const data = await response.json();
+      const responseText = data.response;
 
       setMessages(prev => [...prev, {
         id: prev.length + 1,

@@ -85,5 +85,18 @@ def save_conversation(session_id: str, question: str, response: str, user_id: st
 
 
 
+def get_saved_conversation(session_id: str, user_id: str = None):
+    doc_ref = memory_collection.document(session_id)
+    doc = doc_ref.get()
 
+    if not doc.exists:
+        return False
+
+    data = doc.to_dict()
+
+    # Ensure only the owner can access the conversation
+    if user_id and data.get("user_id") != user_id:
+        return False
+
+    return data
 

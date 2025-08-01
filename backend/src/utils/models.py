@@ -22,7 +22,7 @@ class ChatRequest(BaseModel):
     question: str
     session_id: str  # required for memory handling
     user_id: Optional[str] = None  # Add user_id for conversation tracking
-
+    current_url: Optional[str] = None
 
 class UrlRequest(BaseModel):
     company_name: str
