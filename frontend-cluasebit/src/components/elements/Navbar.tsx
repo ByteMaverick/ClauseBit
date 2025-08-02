@@ -2,10 +2,12 @@ import { Container } from "../shared/Container";
 import { NavItem } from "../shared/NavItem";
 import { BtnLink } from "../shared/BtnLink";
 
+
 export const navItems = [
   { href: "#", text: "Home" },
   { href: "#services", text: "Services" },
   { href: "#about-us", text: "About Us" },
+
 ];
 
 export const Navbar = () => {

@@ -7,213 +7,238 @@ import {
   AlertTriangle,
   Search,
   BookOpenCheck,
+  Chrome,
 } from "lucide-react";
 
 const Home = () => {
   const features = [
     {
       title: "Summarize Policies",
-      description:
-        "Get simplified summaries of Terms of Service and privacy policies.",
-      icon: <FileText className="w-6 h-6 text-green-600" />,
+      description: "Get simplified summaries of Terms of Service and privacy policies.",
+      icon: <FileText className="w-6 h-6 text-emerald-600" />,
     },
     {
       title: "Flag Risky Clauses",
-      description:
-        "Identify data sharing, location tracking, and other risky practices.",
-      icon: <AlertTriangle className="w-6 h-6 text-red-600" />,
+      description: "Identify data sharing, location tracking, and other risky practices.",
+      icon: <AlertTriangle className="w-6 h-6 text-red-500" />,
     },
     {
       title: "Query Explanations",
-      description:
-        "Receive clear and concise explanations of policy clauses when needed.",
-      icon: <Search className="w-6 h-6 text-blue-600" />,
+      description: "Receive clear and concise explanations of policy clauses when needed.",
+      icon: <Search className="w-6 h-6 text-blue-500" />,
     },
     {
       title: "Dynamic Knowledge Base",
-      description:
-        "Retrieve relevant company information on demand using AI agents.",
-      icon: <BookOpenCheck className="w-6 h-6 text-emerald-600" />,
+      description: "Retrieve relevant company information on demand using AI agents.",
+      icon: <BookOpenCheck className="w-6 h-6 text-purple-600" />,
     },
   ];
 
+  const extensionFeatures = [
+    "Instantly flags data sharing and location tracking clauses",
+    "Adds a simple summary button to websites with policies",
+    "Seamless integration with your personal privacy preferences",
+  ];
+
   return (
-    <main>
+    <main className="bg-body">
       {/* Hero Section */}
-      <section className="relative pt-32 lg:pt-36">
-        <Container className="flex flex-col lg:flex-row gap-10 lg:gap-12">
-          {/* Gradient Blobs */}
-          <div className="absolute w-full lg:w-1/2 inset-y-0 lg:right-0">
-            <span className="absolute -left-6 md:left-4 top-24 lg:top-28 w-24 h-24 rotate-90 skew-x-12 rounded-3xl bg-gradient-to-r from-purple-600 to-pink-600 blur-xl opacity-60 lg:opacity-95 lg:block hidden" />
-            <span className="absolute right-4 bottom-12 w-24 h-24 rounded-3xl bg-primary blur-xl opacity-80" />
+      <section className="relative pt-32 pb-24 overflow-hidden">
+        <Container>
+          {/* Background Elements */}
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute top-20 left-10 w-72 h-72 bg-purple-500/10 rounded-full blur-3xl" />
+            <div className="absolute bottom-20 right-10 w-72 h-72 bg-pink-500/10 rounded-full blur-3xl" />
           </div>
 
-          {/* Text */}
-          <div className="relative flex flex-col items-center text-center lg:text-left lg:py-8 lg:items-start lg:max-w-none max-w-3xl mx-auto lg:mx-0 lg:flex-1 lg:w-1/2">
-            <h1 className="text-heading-1 text-3xl sm:text-4xl md:text-5xl xl:text-6xl font-bold">
-              Take Control of
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 ml-2">
-                Your Privacy
-              </span>
-            </h1>
-            <Paragraph className="mt-8">
-              ClauseBit is your AI-powered legal assistant that scans Terms of
-              Service, Privacy Policies, and Cookie Banners — flagging risky
-              clauses and explaining them in plain English. Personalized to your
-              privacy preferences.
-            </Paragraph>
-            <div className="mt-10">
-              <a
-                href="/sign-up"
-                className="inline-block px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-full shadow-lg hover:scale-105 transition-transform"
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Content */}
+            <div className="text-center lg:text-left space-y-8">
+              <h1 className="text-heading-1 text-4xl md:text-5xl xl:text-6xl font-bold leading-tight">
+                Take Control of{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+                  Your Privacy
+                </span>
+              </h1>
+
+              <Paragraph className="text-lg max-w-2xl">
+                ClauseBit is your AI-powered legal assistant that scans Terms of Service,
+                Privacy Policies, and Cookie Banners — flagging risky clauses and explaining
+                them in plain English.
+              </Paragraph>
+
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <a
+                  href="/sign-up"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                >
+                  Try Now for Free
+                </a>
+                <a
+                  href="#about-us"
+                  className="inline-flex items-center justify-center px-8 py-4 border-2 border-purple-600 text-purple-600 font-semibold rounded-xl hover:bg-purple-50 transition-colors duration-200"
+                >
+                  Learn More
+                </a>
+              </div>
+            </div>
+
+            {/* Demo Video */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20" />
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="relative w-full max-h-[500px] rounded-2xl shadow-2xl object-cover"
               >
-                Try Now!
-              </a>
+                <source src="/assets/demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </div>
           </div>
-
-          {/* Demo Video */}
-       <div className="flex-1 lg:w-[600px] relative max-w-xl mx-auto lg:mx-0">
-  <video
-    autoPlay
-    loop
-    muted
-    playsInline
-    className="w-full h-auto max-h-[520px] rounded-2xl object-contain shadow-2xl"
-  >
-    <source src="/assets/demo.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
-  <span className="absolute -top-8 -left-10 w-40 h-40 bg-purple-500 blur-2xl opacity-40 rounded-full z-[-1]" />
-</div>
-
         </Container>
       </section>
 
-      {/* About Us Section */}
-      <section id="about-us" className="pt-32">
-        <Container className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-center pt-20">
-          {/* Left Image */}
-          <div className="w-full lg:w-1/2">
-  <video
-    autoPlay
-    loop
-    muted
-    playsInline
-    className="w-full object-contain rounded-3xl shadow-xl max-h-[560px]"
-  >
-    <source src="/assets/demo.mp4" type="video/mp4" />
-    Your browser does not support the video tag.
-  </video>
-</div>
+      {/* About Section */}
+      <section id="about-us" className="py-24 bg-gradient-to-br from-gray-50 to-purple-50/30">
+        <Container>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Video */}
+            <div className="order-2 lg:order-1">
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full max-h-[500px] rounded-2xl shadow-xl object-cover"
+              >
+                <source src="/assets/demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
 
-
-          {/* Right Text */}
-          <div className="w-full lg:w-1/2 flex flex-col justify-center">
-            <Title>About ClauseBit Web App</Title>
-            <Paragraph className="mt-4">
-              Most people don’t read terms and policies — and honestly, we don’t
-              blame them. ClauseBit is here to help. It’s a browser extension and
-              web app that reads through all the legal jargon for you, flags
-              anything sketchy like data sharing or tracking, and explains it in
-              plain language. You get the facts, without the fluff.
-            </Paragraph>
-
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="border rounded-xl p-4 shadow-sm">
-                <Zap className="w-5 h-5 text-purple-600 mb-2" />
-                <h3 className="font-semibold text-sm">Why We Built It</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Everyone clicks 'Agree' — we just want to make sure you know
-                  what you’re agreeing to.
-                </p>
+            {/* Content */}
+            <div className="order-1 lg:order-2 space-y-8">
+              <div>
+                <Title>About ClauseBit</Title>
+                <Paragraph className="mt-4 text-lg">
+                  Most people don't read terms and policies — and honestly, we don't blame them.
+                  ClauseBit reads through all the legal jargon for you, flags anything sketchy,
+                  and explains it in plain language.
+                </Paragraph>
               </div>
-              <div className="border rounded-xl p-4 shadow-sm">
-                <Zap className="w-5 h-5 text-purple-600 mb-2" />
-                <h3 className="font-semibold text-sm">How It Works</h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  We use AI to summarize long policies, highlight risky stuff,
-                  and give you clear answers when you have questions.
-                </p>
+
+              <div className="grid gap-6">
+                <div className="bg-box-bg border border-gray-200 rounded-xl p-6 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <Zap className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-heading-2 font-semibold text-lg mb-2">Why We Built It</h3>
+                      <p className="text-gray-600">
+                        Everyone clicks 'Agree' — we just want to make sure you know what you're agreeing to.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-box-bg border border-gray-200 rounded-xl p-6 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="flex-shrink-0 w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                      <BookOpenCheck className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-heading-2 font-semibold text-lg mb-2">How It Works</h3>
+                      <p className="text-gray-600">
+                        We use AI to summarize long policies, highlight risky stuff, and give you clear answers.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </Container>
       </section>
-      {/* Extension Section */}
-<section id="extension" className="py-20 bg-gradient-to-br from-white via-purple-50 to-pink-50">
-  <Container className="flex flex-col lg:flex-row items-center gap-10">
-    {/* Left: Extension Preview Video */}
-    <div className="w-full lg:w-1/2">
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        className="w-full object-contain rounded-3xl shadow-xl max-h-[540px]"
-      >
-        <source src="/assets/demo.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </video>
-    </div>
 
-    {/* Right: Description */}
-    <div className="w-full lg:w-1/2">
-      <Title>ClauseBit Browser Extension</Title>
-      <Paragraph className="mt-4">
-        The ClauseBit extension works directly in your browser — scanning privacy policies, cookie banners, and Terms of Service in real time. It flags risky language, auto-summarizes key clauses, and explains what you're agreeing to before you click "Accept."
-      </Paragraph>
+      {/* Browser Extension Section */}
+      <section id="extension" className="py-24">
+        <Container>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Content */}
+            <div className="space-y-8">
+              <div>
+                <Title>Browser Extension</Title>
+                <Paragraph className="mt-4 text-lg">
+                  The ClauseBit extension works directly in your browser — scanning privacy policies,
+                  cookie banners, and Terms of Service in real time.
+                </Paragraph>
+              </div>
 
-      <ul className="mt-6 space-y-3 text-sm text-muted-foreground">
-        <li className="flex items-start gap-2">
-          <Zap className="w-4 h-4 text-purple-600 mt-1" />
-          Instantly flags data sharing and location tracking clauses.
-        </li>
-        <li className="flex items-start gap-2">
-          <Zap className="w-4 h-4 text-purple-600 mt-1" />
-          Adds a simple summary button to websites with policies.
-        </li>
-        <li className="flex items-start gap-2">
-          <Zap className="w-4 h-4 text-purple-600 mt-1" />
-          Seamless integration with your personal privacy preferences.
-        </li>
-      </ul>
+              <div className="space-y-4">
+                {extensionFeatures.map((feature, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mt-0.5">
+                      <Zap className="w-3 h-3 text-purple-600" />
+                    </div>
+                    <p className="text-gray-600">{feature}</p>
+                  </div>
+                ))}
+              </div>
 
-      <div className="mt-8">
-        <a
-          href="/sign-up"
-          className="inline-block px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-full shadow-md hover:scale-105 transition-transform"
-        >
-          Add to Chrome
-        </a>
-      </div>
-    </div>
-  </Container>
-</section>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a
+                  href="/sign-up"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                >
+                  <Chrome className="w-5 h-5" />
+                  Add to Chrome
+                </a>
+              </div>
+            </div>
 
+            {/* Video */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20" />
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="relative w-full max-h-[500px] rounded-2xl shadow-xl object-cover"
+              >
+                <source src="/assets/demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </Container>
+      </section>
 
-      {/* Services Section */}
-      <section id="services" className="py-20">
-        <Container className="space-y-10 md:space-y-12">
-          <div className="text-center max-w-3xl mx-auto space-y-4">
+      {/* Features Section */}
+      <section id="services" className="py-24 bg-gradient-to-br from-gray-50 to-purple-50/30">
+        <Container>
+          <div className="text-center max-w-3xl mx-auto mb-16">
             <Title>What ClauseBit Can Do</Title>
-            <Paragraph>
-              ClauseBit uses cutting-edge AI to help you understand and control
-              your digital agreements — faster and smarter.
+            <Paragraph className="mt-4 text-lg">
+              ClauseBit uses cutting-edge AI to help you understand and control your digital agreements.
             </Paragraph>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-6 lg:gap-10">
-            {features.map((feature, idx) => (
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => (
               <div
-                key={idx}
-                className="flex flex-col items-center text-center max-w-xs px-4"
+                key={index}
+                className="bg-box-bg border border-gray-200 rounded-xl p-8 text-center shadow-sm hover:shadow-md transition-shadow duration-200"
               >
-                <div className="mb-3">{feature.icon}</div>
-                <h3 className="text-lg font-semibold">{feature.title}</h3>
-                <p className="text-sm text-muted-foreground mt-2">
-                  {feature.description}
-                </p>
+                <div className="w-16 h-16 bg-gray-50 rounded-xl flex items-center justify-center mx-auto mb-6">
+                  {feature.icon}
+                </div>
+                <h3 className="text-heading-2 font-semibold text-xl mb-4">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -224,6 +249,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-

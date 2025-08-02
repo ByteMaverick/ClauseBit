@@ -7,9 +7,8 @@ from datetime import datetime
 from typing import List, Optional
 import uuid
 import os
-
+from backend.token import router
 from google.cloud import firestore
-
 from backend.src.agents.graph import end_point_chat
 from backend.src.agents.state_setup import ClauseBitState
 from backend.src.tools.vector_store import VectorStoreManager
@@ -27,6 +26,8 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/mohammedansari/Desktop/cl
 
 # 🔧 FastAPI Setup
 app = FastAPI()
+app.include_router(router)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -53,7 +54,11 @@ async def chat_endpoint(req: ChatRequest):
 
 
     message_history =get_saved_conversation(req.session_id,req.user_id)
-    messages = message_history["messages"]
+
+    if not message_history:
+        messages = None
+    else:
+        messages = message_history["messages"]
 
     if req.current_url is None:
         req.current_url ="https://github.com/"

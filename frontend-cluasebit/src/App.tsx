@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import ClauseBitDashboard from "./pages/ClauseBitDashboard";
 import AuthenticationPage from "src/auth/AuthenticationPage.tsx";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/clerk-react";
+import TermsAndConditions from "./pages/TermsAndConditions";
 
 const App: React.FC = () => {
   return (
@@ -22,6 +23,15 @@ const App: React.FC = () => {
           element={
             <Layout title="ClauseBit">
               <Home />
+            </Layout>
+          }
+        />
+          {/* Terms and Conditions page */}
+        <Route
+          path="/terms"
+          element={
+            <Layout title="Terms and Conditions - ClauseBit">
+              <TermsAndConditions />
             </Layout>
           }
         />

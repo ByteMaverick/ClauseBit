@@ -1,6 +1,6 @@
 // ClauseBitDashboard.tsx (Main component - now much cleaner)
 import React, { useState, useRef, useEffect } from 'react';
-import { useClerk, useUser } from "@clerk/clerk-react";
+import {useClerk, useUser} from "@clerk/clerk-react";
 import { useNavigate } from 'react-router-dom';
 
 import Sidebar from 'src/components/Sidebar.tsx';
@@ -24,6 +24,12 @@ const ClauseBitDashboard: React.FC = () => {
   const [inputMessage, setInputMessage] = useState<string>('');
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => window.innerWidth >= 1024);
+
+  useEffect(() => {
+    document.title = "Dashboard - ClauseBit";
+  }, []);
+
+
 
   const [currentSessionId, setCurrentSessionId] = useState<string>(() =>
       `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
