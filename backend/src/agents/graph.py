@@ -20,15 +20,23 @@ llm = ChatVertexAI(
     max_output_tokens=1500  # Reduced from 3000 for faster generation
 )
 # Create supervisor node
-research_supervisor_node = make_supervisor_node(llm, ["search", "llm_answer", "scraping_in_progress"])
+research_supervisor_node = make_supervisor_node(
+    llm,
+    ["search", "llm_answer", "scraping_in_progress"]
+)
 
-
+# Route decisions made by supervisor
 def route_supervisor_decision(state: ClauseBitState):
     """Route based on supervisor's decision"""
-    decision = research_supervisor_node(state)
-    return decision
+    return research_supervisor_node(state)
 
+
+
+
+# Build the LangGraph
 graph = StateGraph(ClauseBitState)
+
+# Add nodes
 graph.add_node("supervisor", lambda state: state)
 graph.add_node("search", search_node)
 graph.add_node("llm_answer", llm_answer_node)
@@ -36,8 +44,10 @@ graph.add_node("scraping_in_progress", scraping_in_progress_node)
 graph.add_node("error_handler", error_handler_node)
 graph.add_node("finish", lambda state: state)
 
+# Set entry point
 graph.set_entry_point("supervisor")
 
+# Route decisions made by supervisor
 graph.add_conditional_edges(
     "supervisor",
     route_supervisor_decision,
@@ -50,12 +60,20 @@ graph.add_conditional_edges(
     }
 )
 
-# All nodes go directly to END for faster responses
+# Normal execution goes to END
 graph.add_edge("search", END)
 graph.add_edge("llm_answer", END)
-graph.add_edge("scraping_in_progress", END)
 graph.add_edge("error_handler", END)
 graph.add_edge("finish", END)
+
+# Loop: scraping → supervisor (via routing tag)
+graph.add_conditional_edges(
+    "scraping_in_progress",
+    lambda result: result[0],  # get tag from ("supervisor", updated_state)
+    {
+        "supervisor": "supervisor"
+    }
+)
 
 research_graph = graph.compile()
 

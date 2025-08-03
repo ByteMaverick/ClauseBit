@@ -124,5 +124,3 @@ def test():
 
     score = grader.CompositeGrader(retrieval_chunks, question)
     print(score)
-
-test()

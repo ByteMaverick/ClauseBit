@@ -43,7 +43,3 @@ def get_company_by_url(url: str):
         return  False
 
 
-
-
-
-

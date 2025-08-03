@@ -56,8 +56,6 @@ async def chat_endpoint(req: ChatRequest):
     else:
         messages = message_history["messages"]
 
-    if req.current_url is None:
-        req.current_url ="https://github.com/"
     # Process the chat message
     result = end_point_chat(
         question=req.question,
@@ -76,7 +74,6 @@ async def chat_endpoint(req: ChatRequest):
 
     return {"response": response}
 
-@app.post("/summary")
 @app.post("/summary")
 async def summary_endpoint(req: UrlRequest):
     print("🔍 Requested summary for:", req.company_name)

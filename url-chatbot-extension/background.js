@@ -2,11 +2,11 @@ const tabUrlMap = new Map();
 const classifierTimers = new Map();
 const scannedDomains = new Set();
 
-// 🔐 Get Clerk session cookie and pass JWT to callback
+// Get Clerk session cookie and pass JWT to callback
 async function getSessionJWT() {
   return new Promise((resolve) => {
     chrome.cookies.get(
-      { url: "http://localhost:5173", name: "__session" },
+      { url: "https://clausebit.online/", name: "__session" },
       (cookie) => {
         if (cookie) resolve(cookie.value);
         else resolve(null);
@@ -15,7 +15,7 @@ async function getSessionJWT() {
   });
 }
 
-// 🧠 Main listener for tab updates
+//  Main listener for tab updates
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url && /^https?:\/\//.test(tab.url)) {
     const currentUrl = new URL(tab.url).origin + "/";
@@ -32,13 +32,13 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
     const jwt = await getSessionJWT();
     if (!jwt) {
-      console.warn("🔐 No Clerk session JWT found. Skipping protected endpoints.");
+      console.warn(" No Clerk session JWT found. Skipping protected endpoints.");
       return;
     }
 
     if (!scannedDomains.has(currentUrl)) {
       scannedDomains.add(currentUrl);
-      console.log("🚨 New domain detected:", currentUrl);
+      console.log("New domain detected:", currentUrl);
 
       fetch("https://clausebitbackendimg-834600606953.us-central1.run.app/collector", {
         method: "POST",
@@ -52,10 +52,10 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           if (!res.ok) throw new Error(`HTTP ${res.status}`);
           return res.json();
         })
-        .then((data) => console.log("✅ Collector response:", data))
-        .catch((err) => console.error("❌ Collector error:", err));
+        .then((data) => console.log("Collector response:", data))
+        .catch((err) => console.error(" Collector error:", err));
     } else {
-      console.log("⚠️ Skipped duplicate collector for:", currentUrl);
+      console.log(" Skipped duplicate collector for:", currentUrl);
     }
 
     const timerId = setTimeout(() => {
@@ -64,11 +64,11 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
         const stillUrl = new URL(updatedTab.url).origin + "/";
         if (stillUrl === currentUrl) {
-          console.log("🧠 Still on URL after 3s, fetching summary for:", currentUrl);
+          console.log("Still on URL after 3s, fetching summary for:", currentUrl);
 
           const jwtAgain = await getSessionJWT();
           if (!jwtAgain) {
-            console.warn("🔐 No Clerk session JWT for summary fetch.");
+            console.warn("No Clerk session JWT for summary fetch.");
             return;
           }
 
@@ -82,15 +82,15 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
           })
             .then((res) => res.json())
             .then((data) => {
-              console.log("✅ Summary response:", data);
+              console.log(" Summary response:", data);
               chrome.storage.local.set({ [`summary_${currentUrl}`]: data });
               chrome.action.setBadgeText({ text: "!" });
               chrome.action.setBadgeBackgroundColor({ color: "#FF0000" });
             })
-            .catch((err) => console.error("❌ Summary error:", err));
+            .catch((err) => console.error("Summary error:", err));
         }
       });
-    }, 60000);
+    }, 5000);
 
     classifierTimers.set(tabId, timerId);
   }
@@ -109,7 +109,7 @@ chrome.runtime.onInstalled.addListener(() => {
   scannedDomains.clear();
   tabUrlMap.clear();
   classifierTimers.clear();
-  console.log("🔁 ClauseBit background script reloaded.");
+  console.log("ClauseBit background script reloaded.");
 });
 
 // Allow popup.js to get current tab URL

@@ -33,7 +33,7 @@ def fetch_web_data_to_db_async(url: str):
         return loop.run_until_complete(vectorstore.proto_add_final(url))
     return executor.submit(_fetch)
 
-@tool
+
 def retrieve_and_grade(query: str, is_preference_data: bool = False, metadata: Dict[str, str] = None)-> List[Dict]:
     """Retrieves chunks for a query and grades them for relevance, completeness, and faithfulness."""
     vectorstore = VectorStoreManager()

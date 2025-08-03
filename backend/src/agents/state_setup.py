@@ -1,7 +1,7 @@
 # Multi agent setup imports
 from langgraph.graph import add_messages
 from langchain_core.messages import BaseMessage
-from pydantic import BaseModel
+from pydantic import BaseModel,Field
 
 # Python Imports
 from typing import Annotated
@@ -15,6 +15,7 @@ class ClauseBitState(BaseModel):
     current_query: Optional[str] = None
     user_id: Optional[str] = None  # Firebase UID or local session user
     session_id: Optional[str] = None  # Unique ID per chat session
+    context: List[str] = Field(default_factory=list)
 
 
 

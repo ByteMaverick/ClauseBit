@@ -5,6 +5,5 @@ __pycache__/
 *.pyd
 *.ipynb
 .venv/
-.env
-key.json
 prototype_notebooks/
+

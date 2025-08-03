@@ -5,13 +5,13 @@ document.addEventListener("DOMContentLoaded", () => {
   // 🪪 Authenticate extension using Clerk session cookie
   chrome.cookies.get(
     {
-      url: "http://localhost:5173",
+      url: "https://clausebit.online/",
       name: "__session"
     },
     function (cookie) {
       if (cookie) {
         const jwt = cookie.value;
-        console.log("✅ Clerk session cookie (JWT):", jwt);
+        console.log("Clerk session cookie (JWT):", jwt);
 
         fetch("https://clausebitbackendimg-834600606953.us-central1.run.app/api/extension-auth", {
           method: "POST",
@@ -22,11 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log("🔐 Auth response:", data);
+            console.log(" Auth response:", data);
             if (data.is_authenticated) {
               mainSection.style.display = "block";
               unauthSection.style.display = "none";
-              initializePopup(); // ✅ Proceed to initialize rest of the popup
+              initializePopup(); //  Proceed to initialize rest of the popup
             } else {
               mainSection.style.display = "none";
               unauthSection.style.display = "block";
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
             unauthSection.style.display = "block";
           });
       } else {
-        console.warn("⚠️ No Clerk session cookie found.");
+        console.warn("No Clerk session cookie found.");
         mainSection.style.display = "none";
         unauthSection.style.display = "block";
       }
@@ -90,7 +90,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const data = await res.json();
         appendMessage("ClauseBit", data.response, true);
       } catch {
-        appendMessage("ClauseBit", `❌ Error contacting AI backend.`, true);
+        appendMessage("ClauseBit", `Error contacting AI backend.`, true);
       }
     }
 
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
-    // 🔍 Get tab URL
+    // Get tab URL
     try {
       chrome.runtime.sendMessage({ type: "GET_CURRENT_TAB" }, (response) => {
         if (response?.url) {
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const urlObj = new URL(response.url);
             currentURL = urlObj.origin + "/";
           } catch (e) {
-            console.warn("⚠️ URL parse failed:", e);
+            console.warn("URL parse failed:", e);
             currentURL = response.url;
           }
 
@@ -139,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     } catch (e) {
-      console.warn("⚠️ Chrome API not available", e);
+      console.warn("Chrome API not available", e);
       loadSummaryFromBackend(""); // fallback
     }
 
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderSummary(data);
       } catch (error) {
         document.querySelector(".summary-text").textContent = "Failed to load summary.";
-        document.querySelector(".alert-text").textContent = "⚠️ Risk summary unavailable.";
+        document.querySelector(".alert-text").textContent = "Risk summary unavailable.";
       }
     }
 

@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy everything from your local backend folder into the container's /app/backend
 COPY . .
 
-# Optional: Set PYTHONPATH if you're using `from backend.src...`
+# Set PYTHONPATH if you're using `from backend.src...`
 ENV PYTHONPATH=/app
 
 EXPOSE 8080
