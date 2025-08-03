@@ -17,8 +17,8 @@ const ClauseBitDashboard: React.FC = () => {
     {
       id: 1,
       type: 'assistant',
-      content: "Hi! I'm your AI-powered legal assistant. I can scan Terms of Service, Privacy Policies, and Cookie Banners — flagging risky clauses and explaining them in plain English. What would you like to analyze today?",
-      timestamp: new Date().toLocaleTimeString()
+      content: "Hi! I'm your AI-powered legal assistant. I scan policies for risky clauses and explain them clearly. Add a URL for more accurate, real-time results. What would you like to analyze?",
+      timestamp:new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }
   ]);
   const [inputMessage, setInputMessage] = useState<string>('');
@@ -31,9 +31,12 @@ const ClauseBitDashboard: React.FC = () => {
 
 
 
-  const [currentSessionId, setCurrentSessionId] = useState<string>(() =>
-      `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
-  );
+const [currentSessionId, setCurrentSessionId] = useState<string>(() => {
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+  return `session_${time}_${Math.random().toString(36).substr(2, 9)}`;
+});
+
+
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const {user} = useUser();
@@ -93,7 +96,7 @@ const ClauseBitDashboard: React.FC = () => {
     setIsTyping(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:8080/chat', {
+      const response = await fetch('https://clausebitbackendimg-834600606953.us-central1.run.app/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -175,7 +178,9 @@ const ClauseBitDashboard: React.FC = () => {
 
             <div className="flex-1 overflow-y-auto">
               <div className="max-w-4xl mx-auto p-6">
-                {messages.length === 1 && <WelcomeScreen/>}
+                {messages.length === 1 && <WelcomeScreen onSendMessage={(message) => {
+  setInputMessage(message);
+}}/>}
 
                 {messages.map((message: Message) => (
                     <MessageBubble key={message.id} message={message}/>

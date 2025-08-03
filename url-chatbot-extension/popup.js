@@ -1,8 +1,10 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // 1. Show loading screen
+  const loadingScreen = document.getElementById("loading-screen");
   const mainSection = document.getElementById("main-section");
   const unauthSection = document.getElementById("unauth-section");
 
-  // 🪪 Authenticate extension using Clerk session cookie
+  // 2. Auth check via Clerk cookie
   chrome.cookies.get(
     {
       url: "https://clausebit.online/",
@@ -11,8 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
     function (cookie) {
       if (cookie) {
         const jwt = cookie.value;
-        console.log("Clerk session cookie (JWT):", jwt);
-
         fetch("https://clausebitbackendimg-834600606953.us-central1.run.app/api/extension-auth", {
           method: "POST",
           headers: {
@@ -20,30 +20,27 @@ document.addEventListener("DOMContentLoaded", () => {
             Authorization: `Bearer ${jwt}`
           }
         })
-          .then((res) => res.json())
-          .then((data) => {
-            console.log(" Auth response:", data);
-            if (data.is_authenticated) {
-              mainSection.style.display = "block";
-              unauthSection.style.display = "none";
-              initializePopup(); //  Proceed to initialize rest of the popup
-            } else {
-              mainSection.style.display = "none";
-              unauthSection.style.display = "block";
-            }
-          })
-          .catch(() => {
-            mainSection.style.display = "none";
+        .then(res => res.json())
+        .then(data => {
+          loadingScreen.style.display = "none";
+          if (data.is_authenticated) {
+            mainSection.style.display = "block";
+            unauthSection.style.display = "none";
+            initializePopup();
+          } else {
             unauthSection.style.display = "block";
-          });
+          }
+        })
+        .catch(() => {
+          loadingScreen.style.display = "none";
+          unauthSection.style.display = "block";
+        });
       } else {
-        console.warn("No Clerk session cookie found.");
-        mainSection.style.display = "none";
+        loadingScreen.style.display = "none";
         unauthSection.style.display = "block";
       }
     }
   );
-
   function initializePopup() {
     const tabButtons = document.querySelectorAll(".tab");
     const tabContents = document.querySelectorAll(".tab-content");
@@ -160,37 +157,45 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    function renderSummary(data) {
-      document.querySelector(".alert-text").textContent = data.riskLevel;
-      document.querySelector(".summary-text").textContent = data.summaryText;
+  function renderSummary(data) {
+  document.querySelector(".alert-text").textContent = data.riskLevel ?? "Risk data unavailable";
+  document.querySelector(".summary-text").textContent = data.summaryText ?? "No summary provided.";
 
-      const cardsContainer = document.querySelector(".cards");
-      cardsContainer.innerHTML = "";
+  const cardsContainer = document.querySelector(".cards");
+  cardsContainer.innerHTML = "";
 
-      data.clauses.forEach((clause) => {
-        const card = document.createElement("div");
-        card.className = "card";
-        card.innerHTML = `
-          <div class="card-content">
-            <div class="card-icon-text">
-              <i data-lucide="${clause.icon}" class="card-icon ${clause.type}"></i>
-              <div class="card-text">
-                <h3 class="card-title">${clause.title}</h3>
-                <p class="card-description">${clause.description}</p>
-              </div>
+  if (Array.isArray(data.clauses)) {
+    data.clauses.forEach((clause) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="card-content">
+          <div class="card-icon-text">
+            <i data-lucide="${clause.icon || 'alert-triangle'}" class="card-icon ${clause.type || ''}"></i>
+            <div class="card-text">
+              <h3 class="card-title">${clause.title || 'Untitled Clause'}</h3>
+              <p class="card-description">${clause.description || 'No description available.'}</p>
             </div>
-            ${
-              clause.action
-                ? `<button class="${clause.action === "Why?" ? "why-button" : "flag-button"}">${clause.action}</button>`
-                : ""
-            }
           </div>
-        `;
-        cardsContainer.appendChild(card);
-      });
+          ${
+            clause.action
+              ? `<button class="${clause.action === "Why?" ? "why-button" : "flag-button"}">${clause.action}</button>`
+              : ""
+          }
+        </div>
+      `;
+      cardsContainer.appendChild(card);
+    });
+  } else {
+    cardsContainer.innerHTML = `<p class="text-sm text-gray-500">No clause data available.</p>`;
+  }
+
+  lucide.createIcons();
+  chrome.action.setBadgeText({ text: "" });
+}
+
 
       lucide.createIcons();
       chrome.action.setBadgeText({ text: "" });
     }
-  }
 });
