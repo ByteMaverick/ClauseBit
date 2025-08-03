@@ -2,14 +2,13 @@ from typing import Optional, List, Dict
 
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_google_vertexai import ChatVertexAI
-from langgraph.graph import StateGraph, END, START
-
+from langgraph.graph import StateGraph, END
 
 #Local Imports
 from backend.src.agents.state_setup import ClauseBitState
 from backend.src.agents.supervisor_agent import make_supervisor_node
 from backend.src.agents.agents_setup import search_node,llm_answer_node,scraping_in_progress_node,error_handler_node
-from auth.init_vertex import init_vertex_ai
+from backend.auth.init_vertex import init_vertex_ai
 from backend.src.utils.models import Message
 
 # Temp: LLM setup
@@ -59,8 +58,6 @@ graph.add_edge("error_handler", END)
 graph.add_edge("finish", END)
 
 research_graph = graph.compile()
-
-from datetime import time
 
 
 def chat():

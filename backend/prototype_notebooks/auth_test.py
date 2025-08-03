@@ -1,8 +1,6 @@
-from typing import Annotated, List, Dict
+from typing import List, Dict
 from langchain_core.tools import tool
-from sympy import false
 
-from backend.src.tools.webscraper import ScraperManager
 from backend.src.tools.vector_store import VectorStoreManager
 from backend.src.tools.grader import Grader
 from backend.src.tools.datatracker import get_company_by_url
@@ -10,7 +8,6 @@ from backend.src.tools.datatracker import get_company_by_url
 import asyncio
 import nest_asyncio
 from functools import lru_cache
-import threading
 from concurrent.futures import ThreadPoolExecutor
 
 from backend.src.utils.models import Message
@@ -105,12 +102,9 @@ class ClausebitState(BaseModel):
     violations_found: Optional[List[Dict[str, Any]]] = None
 
 
-from typing import List, Optional, Literal, TypedDict, Callable
+from typing import List, Literal, TypedDict
 from langchain_core.language_models.chat_models import BaseChatModel
-from langgraph.graph import StateGraph, MessagesState, START, END
-from langgraph.types import Command
-from langchain_core.messages import HumanMessage, trim_messages
-from langchain_core.messages import AIMessage
+from langgraph.graph import StateGraph, END
 
 
 def make_supervisor_node(llm: BaseChatModel, members: list[str]):
@@ -198,8 +192,7 @@ def make_supervisor_node(llm: BaseChatModel, members: list[str]):
 
 
 from langchain_google_vertexai import ChatVertexAI
-from auth.init_vertex import init_vertex_ai
-from langchain_core.messages import HumanMessage
+from backend.auth.init_vertex import init_vertex_ai
 from langgraph.prebuilt import create_react_agent
 
 init_vertex_ai()
@@ -382,7 +375,7 @@ graph.add_edge("finish", END)
 
 research_graph = graph.compile()
 from langchain_core.messages import HumanMessage, AIMessage
-import time
+
 
 def chat():
     print("🚀 ClauseBit (Optimized): Hello! I can help you analyze legal documents quickly.")
@@ -438,10 +431,8 @@ def chat():
             print("Please try again or type 'quit' to exit.\n")
 
 
-from datetime import datetime
 from typing import Dict, Optional
 import time
-import uuid
 
 
 # Modified chat function to work with your API structure

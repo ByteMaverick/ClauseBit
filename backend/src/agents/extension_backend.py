@@ -1,10 +1,6 @@
-import os
-
-from langchain_core.output_parsers import JsonOutputParser,StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import JsonOutputParser
 from langchain_google_vertexai import ChatVertexAI
 
-from auth.init_vertex import init_vertex_ai
 from backend.src.tools.vector_store import VectorStoreManager
 from langchain_core.prompts import ChatPromptTemplate
 # Set environment variables early

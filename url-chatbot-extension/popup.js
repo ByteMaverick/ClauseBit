@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const jwt = cookie.value;
         console.log("✅ Clerk session cookie (JWT):", jwt);
 
-        fetch("http://127.0.0.1:8080/api/extension-auth", {
+        fetch("https://clausebitbackendimg-834600606953.us-central1.run.app/api/extension-auth", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
       userInput.value = "";
 
       try {
-        const res = await fetch("http://127.0.0.1:8080/chat", {
+        const res = await fetch("https://clausebitbackendimg-834600606953.us-central1.run.app/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -145,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function loadSummaryFromBackend(url) {
       try {
-        const res = await fetch("http://127.0.0.1:8080/summary", {
+        const res = await fetch("https://clausebitbackendimg-834600606953.us-central1.run.app/summary", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ company_name: url })

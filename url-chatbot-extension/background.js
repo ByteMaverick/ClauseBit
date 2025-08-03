@@ -40,7 +40,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       scannedDomains.add(currentUrl);
       console.log("🚨 New domain detected:", currentUrl);
 
-      fetch("http://127.0.0.1:8080/collector", {
+      fetch("https://clausebitbackendimg-834600606953.us-central1.run.app/collector", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             return;
           }
 
-          fetch("http://127.0.0.1:8080/summary", {
+          fetch("https://clausebitbackendimg-834600606953.us-central1.run.app/summary", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -90,7 +90,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
             .catch((err) => console.error("❌ Summary error:", err));
         }
       });
-    }, 3000);
+    }, 60000);
 
     classifierTimers.set(tabId, timerId);
   }

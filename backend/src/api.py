@@ -1,16 +1,10 @@
+import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-import asyncio
-from pydantic import BaseModel
-from datetime import datetime
-from typing import List, Optional
-import uuid
-import os
-from backend.token import router
+from backend.src.router import router
 from google.cloud import firestore
 from backend.src.agents.graph import end_point_chat
-from backend.src.agents.state_setup import ClauseBitState
 from backend.src.tools.vector_store import VectorStoreManager
 from backend.src.utils.chatbot_memory import save_conversation, get_saved_conversation
 from backend.src.utils.models import ChatRequest, ChatMemory, UrlRequest
@@ -22,7 +16,9 @@ warnings.filterwarnings("ignore", category=UserWarning, module="vertexai")
 
 
 # 🔐 Set Firestore Credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/mohammedansari/Desktop/clausebit/backend/src/utils/clausebit-firestore-key.json"
+from backend.auth.init_vertex import init_vertex_ai
+init_vertex_ai()
+
 
 # 🔧 FastAPI Setup
 app = FastAPI()
@@ -109,21 +105,11 @@ async def summary_endpoint(req: UrlRequest):
         await vectorstore.proto_add_final(req.company_name)
 
 
-
-    # dic = summary(req.company_name)
-
-@app.post("/classifier")
-async def classifier_endpoint(req):
-    print(f"company_name: {req.company_name}")
-    return f"company_name: {req.company_name}"
-
-
-# 💾 Save chat
+# Save chat
 @app.post("/memory/save")
 async def save_memory(memory: ChatMemory):
     memory_collection.document(memory.session_id).set(memory.dict())
     return {"status": "saved"}
-
 
 @app.get("/memory/{user_id}/{session_id}")
 async def get_full_chat(user_id: str, session_id: str):
@@ -148,7 +134,6 @@ async def get_recent_chats(user_id: str):
         .limit(20)  # latest 20 chats
         .stream()
     )
-
     return [
         {
             "session_id": doc.id,
@@ -158,7 +143,7 @@ async def get_recent_chats(user_id: str):
         for doc in docs
     ]
 
-# 🏠 landing page
+# landing page
 @app.get("/", response_class=HTMLResponse)
 async def root():
     return "<h1>🚀 Server running</h1>"
@@ -170,7 +155,10 @@ async def conversations():
 
 
 
-# ⏯️ Optional local run
+# local run
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("api:app", host="0.0.0.0", port=8080, reload=True)
+    import os
+
+    port = int(os.getenv("PORT", 8080))  # Cloud Run will set PORT, fallback to 8080 locally
+
+    uvicorn.run("backend.src.api:app", host="0.0.0.0", port=port, reload=True)

@@ -1,6 +1,6 @@
 from langchain_google_vertexai import ChatVertexAI
-from auth.init_vertex import init_vertex_ai
-from langchain_core.messages import HumanMessage, AIMessage
+from backend.auth.init_vertex import init_vertex_ai
+from langchain_core.messages import AIMessage
 from langgraph.prebuilt import create_react_agent
 # Local Imports
 from backend.src.agents.research_team import retrieve_and_grade

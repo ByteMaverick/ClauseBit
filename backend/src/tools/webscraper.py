@@ -1,8 +1,6 @@
 # links
 from urllib.parse import urljoin
 
-
-from langchain_google_vertexai import ChatVertexAI
 # Scaper imports
 from bs4 import BeautifulSoup
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeout
@@ -16,7 +14,7 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_google_vertexai import ChatVertexAI
 
 
-from auth.init_vertex import init_vertex_ai
+from backend.auth.init_vertex import init_vertex_ai
 from backend.src.tools.datatracker import add_company
 
 

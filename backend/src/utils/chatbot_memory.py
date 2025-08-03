@@ -1,12 +1,8 @@
-import os
-import uuid
-from datetime import datetime
-from datetime import datetime, timezone
 from google.cloud import firestore
+from backend.auth.init_vertex import init_vertex_ai
 
-# 🔐 Set Firestore Credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/mohammedansari/Desktop/clausebit/backend/src/utils/clausebit-firestore-key.json"
-
+#Set Firestore Credentials
+init_vertex_ai()
 # 🧠 Firestore Client
 db = firestore.Client()
 memory_collection = db.collection("memories")
@@ -78,7 +74,7 @@ def save_conversation(session_id: str, question: str, response: str, user_id: st
         # Update the last modified timestamp
         existing_data["timestamp"] = current_timestamp
 
-        # ✅ Update existing doc
+        # Update existing doc
         doc_ref.set(existing_data)
         return existing_data
 

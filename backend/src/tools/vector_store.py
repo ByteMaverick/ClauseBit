@@ -1,7 +1,5 @@
-from datetime import datetime
-
 import chromadb
-from auth.init_vertex import init_vertex_ai
+from backend.auth.init_vertex import init_vertex_ai
 import os
 from langchain_chroma import Chroma
 from langchain_google_vertexai import VertexAIEmbeddings
@@ -134,8 +132,6 @@ class VectorStoreManager:
 
 
 if __name__ == "__main__":
-    import asyncio
-
     test = VectorStoreManager()
 
     query = (

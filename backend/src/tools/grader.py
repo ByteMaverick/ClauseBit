@@ -1,8 +1,8 @@
 import numpy as np
-from langchain_core.output_parsers import StrOutputParser, JsonOutputParser
+from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 
-from auth.init_vertex import init_vertex_ai
+from backend.auth.init_vertex import init_vertex_ai
 from langchain_google_vertexai import VertexAIEmbeddings, ChatVertexAI
 
 

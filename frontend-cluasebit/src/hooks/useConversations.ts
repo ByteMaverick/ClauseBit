@@ -7,7 +7,7 @@ export const useConversations = (currentUserId: string) => {
 
   const loadConversations = useCallback(async (): Promise<void> => {
     try {
-      const response = await fetch(`http://127.0.0.1:8080/memory/recent/${currentUserId}/`);
+      const response = await fetch(`https://clausebitbackendimg-834600606953.us-central1.run.app/memory/recent/${currentUserId}/`);
       if (response.ok) {
         const conversationsData = await response.json();
         console.log('Raw conversations data:', conversationsData);
@@ -57,7 +57,7 @@ export const useConversations = (currentUserId: string) => {
 
   const loadConversation = useCallback(async (sessionId: string): Promise<Message[]> => {
     try {
-      const response = await fetch(`http://127.0.0.1:8080/memory/${currentUserId}/${sessionId}`);
+      const response = await fetch(`https://clausebitbackendimg-834600606953.us-central1.run.app/memory/${currentUserId}/${sessionId}`);
       if (!response.ok) {
         console.error('Failed to load conversation:', response.status, response.statusText);
         return [{

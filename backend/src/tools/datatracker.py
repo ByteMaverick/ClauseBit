@@ -1,7 +1,5 @@
-import os
-
 from google.cloud import firestore
-from auth.init_vertex import init_vertex_ai
+from backend.auth.init_vertex import init_vertex_ai
 
 
 init_vertex_ai()
