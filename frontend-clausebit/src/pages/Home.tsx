@@ -93,7 +93,61 @@ const Home = () => {
                 playsInline
                 className="relative w-full max-h-[500px] rounded-2xl shadow-2xl object-cover"
               >
-                <source src="/assets/demo.mp4" type="video/mp4" />
+                <source src="/assets/main-demo.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+        {/* Browser Extension Section */}
+      <section id="extension" className="py-24">
+        <Container>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Content */}
+            <div className="space-y-8">
+              <div>
+                <Title>Browser Extension</Title>
+                <Paragraph className="mt-4 text-lg">
+                  The ClauseBit extension works directly in your browser — scanning privacy policies,
+                  cookie banners, and Terms of Service in real time.
+                </Paragraph>
+              </div>
+
+              <div className="space-y-4">
+                {extensionFeatures.map((feature, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mt-0.5">
+                      <Zap className="w-3 h-3 text-purple-600" />
+                    </div>
+                    <p className="text-gray-600">{feature}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a
+                  href="/sign-up"
+                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
+                >
+                  <Chrome className="w-5 h-5" />
+                  Add to Chrome(Coming Soon!)
+                </a>
+              </div>
+            </div>
+
+            {/* Video */}
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20" />
+              <video
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="relative w-full max-h-[500px] rounded-2xl shadow-xl object-cover"
+              >
+                <source src="/assets/demo-webextension.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
@@ -105,18 +159,14 @@ const Home = () => {
       <section id="about-us" className="py-24 bg-gradient-to-br from-gray-50 to-purple-50/30">
         <Container>
           <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Video */}
-            <div className="order-2 lg:order-1">
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full max-h-[500px] rounded-2xl shadow-xl object-cover"
-              >
-                <source src="/assets/demo.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+            {/* Image with Background Effect */}
+            <div className="order-2 lg:order-1 relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20 -z-10" />
+              <img
+                src="/assets/chatinterface.png"
+                alt="Demo Preview"
+                className="relative w-full max-h-[500px] rounded-2xl shadow-xl object-cover"
+              />
             </div>
 
             {/* Content */}
@@ -164,59 +214,7 @@ const Home = () => {
         </Container>
       </section>
 
-      {/* Browser Extension Section */}
-      <section id="extension" className="py-24">
-        <Container>
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Content */}
-            <div className="space-y-8">
-              <div>
-                <Title>Browser Extension</Title>
-                <Paragraph className="mt-4 text-lg">
-                  The ClauseBit extension works directly in your browser — scanning privacy policies,
-                  cookie banners, and Terms of Service in real time.
-                </Paragraph>
-              </div>
 
-              <div className="space-y-4">
-                {extensionFeatures.map((feature, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="flex-shrink-0 w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center mt-0.5">
-                      <Zap className="w-3 h-3 text-purple-600" />
-                    </div>
-                    <p className="text-gray-600">{feature}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <a
-                  href="/sign-up"
-                  className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
-                >
-                  <Chrome className="w-5 h-5" />
-                  Add to Chrome
-                </a>
-              </div>
-            </div>
-
-            {/* Video */}
-            <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20" />
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="relative w-full max-h-[500px] rounded-2xl shadow-xl object-cover"
-              >
-                <source src="/assets/demo.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          </div>
-        </Container>
-      </section>
 
       {/* Features Section */}
       <section id="services" className="py-24 bg-gradient-to-br from-gray-50 to-purple-50/30">
