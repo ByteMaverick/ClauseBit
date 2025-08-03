@@ -24,54 +24,52 @@
   --text-muted: 156 163 175;
 }
 
-@layer utilities {
-  /* Background utilities */
-  .bg-body {
-    background-color: rgb(var(--color-bg));
-  }
+/* Custom utilities - without @layer for v4 compatibility */
+.bg-body {
+  background-color: rgb(var(--color-bg));
+}
 
-  .bg-box-bg {
-    background-color: rgb(var(--color-box));
-  }
+.bg-box-bg {
+  background-color: rgb(var(--color-box));
+}
 
-  /* Text color utilities */
-  .text-heading-1 {
-    color: rgb(var(--heading-1));
-  }
+/* Text color utilities */
+.text-heading-1 {
+  color: rgb(var(--heading-1));
+}
 
-  .text-heading-2 {
-    color: rgb(var(--heading-2));
-  }
+.text-heading-2 {
+  color: rgb(var(--heading-2));
+}
 
-  .text-heading-3 {
-    color: rgb(var(--heading-3));
-  }
+.text-heading-3 {
+  color: rgb(var(--heading-3));
+}
 
-  .text-muted {
-    color: rgb(var(--text-muted));
-  }
+.text-muted {
+  color: rgb(var(--text-muted));
+}
 
-  /* Border utilities */
-  .border-box {
-    border-color: rgb(var(--box-border));
-  }
+/* Border utilities */
+.border-box {
+  border-color: rgb(var(--box-border));
+}
 
-  /* Shadow utilities */
-  .shadow-box {
-    box-shadow: var(--box-shadow);
-  }
+/* Shadow utilities */
+.shadow-box {
+  box-shadow: var(--box-shadow);
+}
 
-  /* Gradient utilities */
-  .gradient-primary {
-    background: linear-gradient(135deg, rgb(147 51 234) 0%, rgb(219 39 119) 100%);
-  }
+/* Gradient utilities */
+.gradient-primary {
+  background: linear-gradient(135deg, rgb(147 51 234) 0%, rgb(219 39 119) 100%);
+}
 
-  .gradient-text-primary {
-    background: linear-gradient(135deg, rgb(147 51 234) 0%, rgb(219 39 119) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
+.gradient-text-primary {
+  background: linear-gradient(135deg, rgb(147 51 234) 0%, rgb(219 39 119) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Base styles */
@@ -114,9 +112,13 @@ body {
   @apply bg-purple-50 text-purple-700;
 }
 
-/* Card styles */
+/* Card styles - using individual properties instead of @apply */
 .card {
-  @apply bg-box-bg border border-box rounded-xl shadow-box transition-shadow duration-200;
+  background-color: rgb(var(--color-box));
+  border: 1px solid rgb(var(--box-border));
+  border-radius: 0.75rem;
+  box-shadow: var(--box-shadow);
+  transition: box-shadow 0.2s ease;
 }
 
 .card:hover {
