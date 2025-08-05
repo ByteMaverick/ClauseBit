@@ -12,7 +12,9 @@
 ![Gemini](https://img.shields.io/badge/Gemini-2.5%20Pro-4285F4.svg)
 
 
-[![Demo](frontend-clausebit/public/assets/chatinterface.png)](frontend-clausebit/public/assets/main-demo.mp4)
+<a href="frontend-clausebit/public/assets/main-demo.mp4">
+  <img src="frontend-clausebit/public/assets/chatinterface.png" alt="Demo" width="600">
+</a>
 
 ---
 
@@ -30,7 +32,9 @@ ClauseBit brings transparency to these documents with AI — in real time.
 
 ## ✨ Key Features
 
-![Risk Detection](docs/images/risk-dashboard.png)
+<a href="frontend-clausebit/public/assets/main-demo.mp4">
+  <img src="frontend-clausebit/public/assets/risk.png" alt="Demo" width="400">
+</a>
 
 ### 🧠 Clause Detection & Risk Analysis
 - **Flags risky clauses**: data selling, location tracking, consent traps, auto-renewals
@@ -45,7 +49,7 @@ Ask plain-English questions like:
 Powered by a multi-agent LLM system that routes your queries through search, scraping, and response generation.
 
 ### 🌐 Browser Extension + Web App
-![Extension UI](docs/images/extension-ui.png)
+<img src="frontend-clausebit/public/assets/webextension-demo.png" alt="Extension UI" width="600">
 
 - 🔄 **Automatic detection**: instantly analyzes the current site
 - 📁 **Bulk upload**: analyze full policy PDFs or multiple documents
@@ -55,7 +59,7 @@ Powered by a multi-agent LLM system that routes your queries through search, scr
 
 ## 🏗️ Architecture Overview
 
-![Architecture](docs/images/architecture.png)
+<img src="frontend-clausebit/public/assets/conceptmap.png" alt="Architecture" width="700">
 
 ### 🔧 Backend Stack
 - **FastAPI** + **Docker** deployed on **Google Cloud Run**
@@ -132,10 +136,10 @@ graph TD
 
 ## 🧮 Vector Search Pipeline
 
-![Vector Pipeline](docs/images/vector-pipeline.png)
+<img src="frontend-clausebit/public/assets/Rag.png" alt="Vector Pipeline" width="700">
 
 * **Semantic chunking** with legal phrase alignment
-* **MongoDB Atlas** powers fast retrieval and sub-second similarity search
+* **ChromaDB** powers fast retrieval and sub-second similarity search
 * **Confidence filtering** ensures only high-relevance clauses reach the LLM
 * **Metadata tagging**: clause type, source, URL, timestamp
 
@@ -145,18 +149,18 @@ graph TD
 
 ## 🚀 Try ClauseBit
 
-* **Live Web App**: [https://app.clausebit.com](https://app.clausebit.com)
+* **Live Web App**: [https://clausebit.online](https://clausebit.online)
 * **Chrome Extension**:(Comming Soon!)
 
 ---
 
-## 🏆 Competitive Advantage
+## 🏆 What Maked ClauseBit Different 
 
 | Feature                   | ClauseBit     | Traditional Tools |
 | ------------------------- | ------------- | ----------------- |
 | Real-Time Policy Analysis | ✅ Yes         | ❌ No              |
 | Chatbot Assistance        | ✅ LLM-based   | ❌ None or FAQ     |
-| Factual Consistency Scoring              | ✅ 1–10 scale  | ❌ Safe/Unsafe     |
+| Factual Consistency Scoring              | ✅ LLM Score + Similarity Score  | ❌ Safe/Unsafe     |
 | Multi-Agent RAG System    | ✅ LangGraph   | ❌ Flat NLP        |
 | User Preference Learning  | ✅ In progress | ❌ None            |
 
