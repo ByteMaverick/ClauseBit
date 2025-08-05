@@ -30,7 +30,7 @@ ClauseBit brings transparency to these documents with AI — in real time.
 
 ## ✨ Key Features
 
-![Risk Detection](docs/images/risk-dashboard.png)
+![Risk Detection](frontend-clausebit/public/assets/risk.png)
 
 ### 🧠 Clause Detection & Risk Analysis
 - **Flags risky clauses**: data selling, location tracking, consent traps, auto-renewals
@@ -47,7 +47,8 @@ Ask plain-English questions like:
 Powered by a multi-agent LLM system that routes your queries through search, scraping, and response generation.
 
 ### 🌐 Browser Extension + Web App
-![Extension UI](docs/images/extension-ui.png)
+![Extension UI](frontend-clausebit/public/assets/risk.png){ width=50px }
+
 
 - 🔄 **Automatic detection**: instantly analyzes the current site
 - 📁 **Bulk upload**: analyze full policy PDFs or multiple documents
@@ -57,7 +58,7 @@ Powered by a multi-agent LLM system that routes your queries through search, scr
 
 ## 🏗️ Architecture Overview
 
-![Architecture](docs/images/architecture.png)
+![Architecture](frontend-clausebit/public/assets/conceptmap.png)
 
 ### 🔧 Backend Stack
 - **FastAPI** + **Docker** deployed on **Google Cloud Run**
@@ -134,7 +135,7 @@ graph TD
 
 ## 🧮 Vector Search Pipeline
 
-![Vector Pipeline](docs/images/vector-pipeline.png)
+![Vector Pipeline](frontend-clausebit/public/assets/Rag.png)
 
 * **Semantic chunking** with legal phrase alignment
 * **MongoDB Atlas** powers fast retrieval and sub-second similarity search
@@ -147,7 +148,7 @@ graph TD
 
 ## 🚀 Try ClauseBit
 
-* **Live Web App**: [https://app.clausebit.com](https://app.clausebit.com)
+* **Live Web App**: [https://clausebit.online](https://clausebit.online)
 * **Chrome Extension**:(Comming Soon!)
 
 ---
