@@ -72,3 +72,20 @@ def retriever(query: str, ispreferencedata: bool = False, metadata: Dict[str, st
 # Cached status check
 def check_db(url: str):
     return get_cached_db_status(url)
+
+
+q ="privacy"
+m= {'domain': 'https://www.rtings.com/'}
+
+
+query = (
+        "Summarize all clauses related to data sharing, user consent, third-party access, "
+        "data retention, tracking, targeted advertising, user rights, and account deletion. "
+        "Highlight anything that could affect user privacy or security."
+        "github"
+        ""
+    )
+metadata = {"domain":"https://www.youtube.com/"}
+d = retrieve_and_grade(query= q, metadata= m)
+
+print(d)

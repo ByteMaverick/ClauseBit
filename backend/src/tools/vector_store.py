@@ -141,7 +141,7 @@ if __name__ == "__main__":
         "github"
         ""
     )
-    metadata = {"domain":"https://www.youtube.com/"}
+    metadata = {"domain":"https://www.emirates.com/"}
 
     result = test.vectordb_query_chatbot("What is the cookie policy?", metadata_filter=metadata)
     print(result)

@@ -51,12 +51,25 @@ def search_node(state: ClauseBitState) -> ClauseBitState:
         print(metadata)
         print(f"current qurstion {user_question}")
         context = retrieve_and_grade(query = user_question, metadata =metadata )
-        print(f"context:{context}")
+        #print(f"context:{context}")
+
+        if context:
+            context_note = f"{context}\n"
+        else:
+            context_note = (
+                "IMPORTANT: ClauseBit was unable to retrieve legal documents from the specified website "
+                "due to bot protection or site restrictions. Scraping support for this site is coming soon. "
+                "You MUST clearly inform the user about this limitation in the first sentence of your response. "
+                "Then, answer the user's question using general knowledge.\n\n"
+            )
 
         full_prompt = (
-            f"{context}\nCurrent question: {user_question}\n\nProvide a concise, helpful response in a chat format."
-            f"Do not include:  Markdown formatting (like **bold**, bullet points, or headings ")
-        print(f"Using LLM Node:{full_prompt}")
+            f"{context_note}Current question: {user_question}\n\n"
+            f"Provide a concise, helpful response in a chat format. "
+            f"Do not include: Markdown formatting (like **bold**, bullet points, or headings)"
+        )
+
+      #  print(f"Using LLM Node:{full_prompt}")
         llm_response = llm.invoke(full_prompt)
         response_content = llm_response.content
 

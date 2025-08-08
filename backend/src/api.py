@@ -122,6 +122,7 @@ async def get_full_chat(user_id: str, session_id: str):
     return data  # includes messages
 
 
+
 @app.get("/memory/recent/{user_id}/")
 async def get_recent_chats(user_id: str):
     docs = (

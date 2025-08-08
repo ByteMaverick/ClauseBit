@@ -20,7 +20,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onSendMessage }) => {
       icon: Eye,
       title: "Privacy Policy",
       description: "Review data collection & usage practices",
-      prompt: "Can you review the Privacy Policy at https://youtube.com/ and explain what personal data they collect, how it's used, and if it's shared with third parties? Please highlight any red flags.",
+      prompt: "Can you review the Privacy Policy at https://www.youtube.com/ and explain what personal data they collect, how it's used, and if it's shared with third parties? Please highlight any red flags.",
       gradient: "from-purple-500 to-pink-400",
       hoverColor: "hover:from-purple-600 hover:to-pink-500"
     },
