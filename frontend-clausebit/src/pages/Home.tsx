@@ -62,8 +62,9 @@ const Home = () => {
               </h1>
 
               <Paragraph className="text-lg max-w-2xl">
-                ClauseBit is your AI-powered legal assistant that scans Terms of Service,
-                Privacy Policies, and Cookie Banners — flagging risky clauses and explaining
+                ClauseBit is your AI-powered legal assistant, sourcing information through
+                automated web scraping and manual data collection. It analyzes Terms of Service,
+                Privacy Policies, and Cookie Banners. Flagging risky clauses and explaining
                 them in plain English.
               </Paragraph>
 
@@ -87,15 +88,18 @@ const Home = () => {
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20" />
               <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="relative w-full max-h-[500px] rounded-2xl shadow-2xl object-cover"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="metadata"
+                  poster="/assets/chatinterface.png"  // Your static image
+                  className="relative w-full max-h-[500px] rounded-2xl shadow-2xl object-cover"
               >
-                <source src="/assets/main-demo.mp4" type="video/mp4" />
+                <source src="/assets/main-demo.mp4" type="video/mp4"/>
                 Your browser does not support the video tag.
               </video>
+
             </div>
           </div>
         </Container>
@@ -141,15 +145,17 @@ const Home = () => {
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl blur opacity-20" />
               <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="relative w-full max-h-[500px] rounded-2xl shadow-xl object-cover"
-              >
-                <source src="/assets/demo-webextension.mp4" type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+            poster="/assets/webextension-demo.png"  // Your static image
+            className="relative w-full max-h-[500px] rounded-2xl shadow-2xl object-cover"
+          >
+            <source src="/assets/demo-webextension.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
             </div>
           </div>
         </Container>
@@ -174,7 +180,7 @@ const Home = () => {
               <div>
                 <Title>About ClauseBit</Title>
                 <Paragraph className="mt-4 text-lg">
-                  Most people don't read terms and policies — and honestly, we don't blame them.
+                  Most people don't read terms and policies, and honestly, we don't blame them.
                   ClauseBit reads through all the legal jargon for you, flags anything sketchy,
                   and explains it in plain language.
                 </Paragraph>
