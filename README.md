@@ -2,7 +2,7 @@
 
 **AI-Powered Privacy Analyzer** that decodes Terms of Service and Privacy Policies in real-time — flagging risky clauses and explaining them in plain English before users click "Accept."
 
-![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
+![Python](https://img.shields.io/badge/Python-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.104+-green.svg)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg)
 ![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED.svg)
