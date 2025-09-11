@@ -18,7 +18,7 @@
 
 ---
 
-## 🎯 The Problem
+## The Problem
 
 Users frequently accept legal agreements without realizing the consequences. Most don't read privacy policies or terms because they are:
 
@@ -30,17 +30,17 @@ ClauseBit brings transparency to these documents with AI — in real time.
 
 ---
 
-## ✨ Key Features
+##  Key Features
 
 <a href="frontend-clausebit/public/assets/main-demo.mp4">
   <img src="frontend-clausebit/public/assets/risk.png" alt="Demo" width="400">
 </a>
 
-### 🧠 Clause Detection & Risk Analysis
+###  Clause Detection & Risk Analysis
 - **Flags risky clauses**: data selling, location tracking, consent traps, auto-renewals
 - **Explains each clause** in clear, user-friendly terms
 
-### 💬 ClauseBot – Chat Assistant
+###ClauseBot – Chat Assistant
 Ask plain-English questions like:
 - *"Does this company sell my data?"*
 - *"What happens if I delete my account?"*
@@ -57,7 +57,7 @@ Powered by a multi-agent LLM system that routes your queries through search, scr
 
 ---
 
-## 🏗️ Architecture Overview
+##  Architecture Overview
 
 <img src="frontend-clausebit/public/assets/conceptmap.png" alt="Architecture" width="700">
 
