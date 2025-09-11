@@ -64,7 +64,7 @@ Powered by a multi-agent LLM system that routes your queries through search, scr
 ### 🔧 Backend Stack
 - **FastAPI** + **Docker** deployed on **Google Cloud Run**
 - **Firestore** stores chat history and user memory
-- **MongoDB Atlas Vector Search** for fast semantic clause matching
+- **ChromaBD Vector Search** for fast semantic clause matching
 - **Playwright** automates document scraping when data is missing
 
 ### 🤖 AI Pipeline
@@ -75,7 +75,7 @@ Powered by a multi-agent LLM system that routes your queries through search, scr
 
 ### 🎨 Frontend Stack
 - **React**, **Vite**, **Tailwind CSS** for modern UI/UX
-- **Plasmo Framework** for extension development
+- **HTML, CSS, JavaScript Framework** for extension development
 - **Clerk Authentication** with JWTs and secure session handling
 - **Cloudflare Pages** for static frontend deployment
 
@@ -165,7 +165,7 @@ graph TD
 | User Preference Learning  | ✅ In progress | ❌ None            |
 
 ---
-
+## Reference 
 
 <div align="center">
 
