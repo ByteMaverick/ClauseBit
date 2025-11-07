@@ -132,7 +132,7 @@ const [currentSessionId, setCurrentSessionId] = useState<string>(() => {
       setMessages(prev => [...prev, {
         id: prev.length + 1,
         type: 'assistant',
-        content: `Sorry, I encountered an error while processing your request: ${error instanceof Error ? error.message : 'Unknown error'}. Please make sure the server is running on http://127.0.0.1:8080`,
+        content: `Sorry, I encountered an error while processing your request: ${error instanceof Error ? error.message : 'Unknown error'}. Servers are are currently down`,
         timestamp: new Date().toLocaleTimeString()
       }]);
     } finally {
