@@ -1,4 +1,4 @@
-// ClauseBitDashboard.tsx (Main component - now much cleaner)
+// ClauseBitDashboard.tsx (Main component )
 import React, { useState, useRef, useEffect } from 'react';
 import {useClerk, useUser} from "@clerk/clerk-react";
 import { useNavigate } from 'react-router-dom';
