@@ -3,7 +3,7 @@ from backend.auth.init_vertex import init_vertex_ai
 
 
 init_vertex_ai()
-# 🧠 Firestore Client
+# Firestore Client
 db = firestore.Client()
 company_collection = db.collection("CompanyList")
 
