@@ -21,7 +21,7 @@ def add_company(url: str,found_data: bool,issue = None):
     })
     print("Done")
 
-
+#test
 def url_in_db(url: str) -> bool:
     # Query Firestore to see if a document with the given URL exists
     query = company_collection.where("url", "==", url).limit(1).get()
